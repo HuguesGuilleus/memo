@@ -142,6 +142,28 @@ func (a *App) memoDelete(w http.ResponseWriter, r *public.Request) {
 	a.db.DeleteS("memo:" + m.ID)
 }
 
+func (a *App) memoPublic(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+
+	switch a.getText(w, &r.Request, 30) {
+	case "no":
+		m.Public = PublicNo
+	case "read":
+		m.Public = PublicRead
+	case "write":
+		m.Public = PublicWrite
+	case "":
+		return
+	default:
+		a.error(w, &r.Request, "Unvalid public level name", http.StatusBadRequest)
+		return
+	}
+	m.save()
+}
+
 // Set Memo.Title
 func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 	m := a.getMemo(w, &r.Request)
@@ -157,7 +179,6 @@ func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 	m.save()
 }
 
-// func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
 // func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
 // func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
 // func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
