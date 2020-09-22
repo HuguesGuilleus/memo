@@ -14,7 +14,6 @@ import (
 	"github.com/HuguesGuilleus/go-db.v1"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -22,6 +21,7 @@ const (
 	PublicNo    uint = 0
 	PublicRead  uint = 1
 	PublicWrite uint = 2
+	TitleMax    int  = 256
 )
 
 type Memo struct {
@@ -77,8 +77,31 @@ func (a *App) getRelease(w http.ResponseWriter, r *http.Request) *Release {
 
 /* HANDLERS */
 
+// List all memos id into a JSON array.
+func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
+	// all := []string{}
+	// a.db.ForS("memo:", 0, 0, func(id string) bool {
+	// 	all = append(all, strings.TrimPrefix(id, "memo:"))
+	// 	return false
+	// }, func(_ string, _ struct{}) {})
+	//
+	// j, _ := json.Marshal(all)
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write(j)
+	all := make([]Memo, 0)
+	a.db.ForS("memo:", 0, 0, nil, func(id string, m Memo) {
+		all = append(all, m)
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(all)
+	// j, _ := json.Marshal(all)
+	// w.Write(j)
+}
+
+// Create a new Memo.
 func (a *App) memoCreate(w http.ResponseWriter, r *public.Request) {
-	title := a.getText(w, &r.Request, 256)
+	title := a.getText(w, &r.Request, TitleMax)
 	if title == "" {
 		return
 	}
@@ -103,16 +126,35 @@ func (a *App) memoCreate(w http.ResponseWriter, r *public.Request) {
 	w.Write([]byte(m.ID))
 }
 
-func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
-	all := []string{}
-	a.db.ForS("memo:", 0, 0, func(id string) bool {
-		all = append(all, strings.TrimPrefix(id, "memo:"))
-		return false
-	}, func(_ string, _ struct{}) {})
+// Delete an memo.
+func (a *App) memoDelete(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
 
-	j, _ := json.Marshal(all)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(j)
+	for _, r := range m.Releases {
+		a.db.Delete(r.Html)
+		a.db.Delete(r.Text)
+		a.db.Delete(r.Pdf)
+	}
+	a.db.Delete(m.Text)
+	a.db.DeleteS("memo:" + m.ID)
+}
+
+// Set Memo.Title
+func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+	title := a.getText(w, &r.Request, TitleMax)
+	if title == "" {
+		return
+	}
+
+	m.Title = title
+	m.save()
 }
 
 // func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}

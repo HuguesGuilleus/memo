@@ -22,16 +22,20 @@ func NewApp() (*App, error) {
 		return nil, err
 	}
 
-	app := &App{
+	a := &App{
 		db:   db.New("data/db/"),
 		auth: auth,
 	}
-	app.auth.Error = app.error
+	a.auth.Error = a.error
 
-	app.auth.HandleFunc("/memo/create", public.LevelStd, app.memoCreate)
-	app.auth.HandleFunc("/memo/list", public.LevelStd, app.memoList)
+	a.auth.HandleFunc("/memo/create", public.LevelStd, a.memoCreate)
+	a.auth.HandleFunc("/memo/delete", public.LevelAdmin, a.memoDelete)
+	a.auth.HandleFunc("/memo/list", public.LevelStd, a.memoList)
 
-	return app, nil
+	// TODO: revoir l'authentification pour prendre en compte public ...
+	a.auth.HandleFunc("/memo/title", public.LevelStd, a.memoTitle)
+
+	return a, nil
 }
 
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
