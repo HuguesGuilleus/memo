@@ -170,6 +170,11 @@ func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 	if m == nil {
 		return
 	}
+
+	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelStd) {
+		return
+	}
+
 	title := a.getText(w, &r.Request, TitleMax)
 	if title == "" {
 		return

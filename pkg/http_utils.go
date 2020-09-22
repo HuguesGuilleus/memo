@@ -5,6 +5,7 @@
 package memo
 
 import (
+	"github.com/Arveto/arvetoAuth/pkg/public2"
 	"html"
 	"io"
 	"net/http"
@@ -57,6 +58,26 @@ func (a *App) getText(w http.ResponseWriter, r *http.Request, max int) string {
 	}
 
 	return s
+}
+
+// Check if the user level is more than l. If fail a message is sending and
+// the function return true.
+func (a *App) checkLevel(w http.ResponseWriter, r *public.Request, l public.UserLevel) bool {
+	if l == public.LevelCandidate {
+		return false
+	}
+
+	if r.User == nil {
+		a.error(w, &r.Request, "You are not connected", http.StatusUnauthorized)
+		return true
+	} else if r.User.Level < l {
+		a.error(w, &r.Request,
+			"You have insufficient to make this action",
+			http.StatusForbidden)
+		return true
+	}
+
+	return false
 }
 
 // Send an error to the client.
