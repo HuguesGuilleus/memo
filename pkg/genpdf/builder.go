@@ -16,6 +16,18 @@ func stringLen(s string) (l int) {
 	return
 }
 
+// Limit the number of rune into a string
+func stringLimit(s string, limit int) string {
+	n := 0             // number of rune
+	for i := range s { // i is the size in byte
+		n++
+		if n > limit {
+			return s[:i]
+		}
+	}
+	return s
+}
+
 // A buffer to split a text into several lines. TabLen and LineLen must be set
 // before use. Do not use it in concurence.
 type Builder struct {

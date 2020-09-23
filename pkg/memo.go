@@ -5,15 +5,17 @@
 package memo
 
 import (
-	// "./genhtml"
-	// "./genpdf"
+	"./genhtml"
+	"./genpdf"
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
 	"github.com/Arveto/arvetoAuth/pkg/public2"
 	"github.com/HuguesGuilleus/go-db.v1"
+	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -75,19 +77,28 @@ func (a *App) getRelease(w http.ResponseWriter, r *http.Request) *Release {
 	return m.Releases[id]
 }
 
+func genPDF(title, id, release, text string, date time.Time) ([]byte, error) {
+	g := genpdf.DejaVuSansMono.CreatePDF()
+	g.Title = title
+	g.AddLines(
+		"",
+		title,
+		"",
+		id,
+		date.Format("[2006-01-02] ")+release,
+		"",
+		strings.Repeat("╴", g.Builder.LineLen),
+		"",
+		"",
+	)
+	g.WriteString(text)
+	return g.PDF()
+}
+
 /* HANDLERS */
 
 // List all memos id into a JSON array.
 func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
-	// all := []string{}
-	// a.db.ForS("memo:", 0, 0, func(id string) bool {
-	// 	all = append(all, strings.TrimPrefix(id, "memo:"))
-	// 	return false
-	// }, func(_ string, _ struct{}) {})
-	//
-	// j, _ := json.Marshal(all)
-	// w.Header().Set("Content-Type", "application/json")
-	// w.Write(j)
 	all := make([]Memo, 0)
 	a.db.ForS("memo:", 0, 0, nil, func(id string, m Memo) {
 		all = append(all, m)
@@ -95,8 +106,66 @@ func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(all)
-	// j, _ := json.Marshal(all)
-	// w.Write(j)
+}
+
+func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+
+	if m.Public < PublicRead && a.checkLevel(w, r, public.LevelVisitor) {
+		return
+	}
+
+	for _, media := range parseQuoting(r.Header.Get("Accept")) {
+		switch media.V {
+		case "*/*", "application/*", "application/json":
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(m)
+			return
+		case "text/plain", "text/markdown", "text/*":
+			w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
+			w.Write([]byte(m.getText()))
+			return
+		case "text/html":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Write([]byte(
+				genhtml.Html(m.getText()),
+			))
+			return
+		case "application/pdf":
+			pdf, err := genPDF(m.Title, m.ID, "live", m.getText(), now())
+			if err != nil {
+				log.Println("[PDF FAIL]", err)
+				a.error(w, &r.Request, "PDF generation fail", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/pdf")
+			w.Write(pdf)
+			return
+		}
+	}
+}
+
+// Set the text body of a Memo
+func (a *App) memoText(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+
+	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelVisitor) {
+		return
+	}
+
+	t := a.getText(w, &r.Request, 0)
+	if t == "" {
+		return
+	}
+
+	a.db.SetRaw(m.Text, []byte(t))
 }
 
 // Create a new Memo.
@@ -142,6 +211,7 @@ func (a *App) memoDelete(w http.ResponseWriter, r *public.Request) {
 	a.db.DeleteS("memo:" + m.ID)
 }
 
+// Set Memo.public.
 func (a *App) memoPublic(w http.ResponseWriter, r *public.Request) {
 	m := a.getMemo(w, &r.Request)
 	if m == nil {

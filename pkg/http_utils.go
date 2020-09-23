@@ -9,12 +9,53 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
 )
 
 func now() time.Time { return time.Now().UTC().Truncate(time.Second) }
+
+type httpQ struct {
+	V string
+	Q float64
+}
+
+// Parse The HTTP headers like Accept. Ignore error. If mediarange is empty,
+// The return value is []httpQ{{V: "*/*", Q: 1.0}}
+func parseQuoting(mediarange string) []httpQ {
+	if mediarange == "" {
+		return []httpQ{{V: "*/*", Q: 1.0}}
+	}
+
+	rangelist := strings.Split(mediarange, ",")
+	qvalues := make([]httpQ, 0, len(rangelist))
+
+	for _, r := range rangelist {
+		rr := strings.Split(r, ";q=")
+		v, q := "", 1.0
+		if len(rr) == 0 {
+			continue
+		} else if len(rr) == 1 {
+			v = rr[0]
+		} else {
+			v = rr[0]
+			qs := strings.SplitN(rr[1], ";", 2)[0]
+			var err error
+			q, err = strconv.ParseFloat(qs, 64)
+			if err != nil {
+				continue
+			}
+		}
+		qvalues = append(qvalues, httpQ{V: v, Q: q})
+	}
+
+	sort.Slice(qvalues, func(i int, j int) bool { return qvalues[i].Q > qvalues[j].Q })
+
+	return qvalues
+}
 
 // Get body and return it. Max is the number max of rune. If max is negative
 // or zero, the length is unchecked.

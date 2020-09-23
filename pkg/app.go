@@ -30,8 +30,10 @@ func NewApp() (*App, error) {
 
 	a.auth.HandleFunc("/memo/create", public.LevelStd, a.memoCreate)
 	a.auth.HandleFunc("/memo/delete", public.LevelAdmin, a.memoDelete)
+	a.auth.HandleFunc("/memo/get", public.LevelCandidate, a.memoGet)
 	a.auth.HandleFunc("/memo/list", public.LevelVisitor, a.memoList)
 	a.auth.HandleFunc("/memo/public", public.LevelStd, a.memoPublic)
+	a.auth.HandleFunc("/memo/text", public.LevelCandidate, a.memoText)
 	a.auth.HandleFunc("/memo/title", public.LevelCandidate, a.memoTitle)
 
 	return a, nil
