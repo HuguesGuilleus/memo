@@ -59,12 +59,7 @@ func (a *App) getMemo(w http.ResponseWriter, r *http.Request) *Memo {
 	m.db = a.db
 	return &m
 }
-func (a *App) getRelease(w http.ResponseWriter, r *http.Request) *Release {
-	m := a.getMemo(w, r)
-	if m == nil {
-		return nil
-	}
-
+func (a *App) getRelease(w http.ResponseWriter, r *http.Request, m *Memo) *Release {
 	_id, err := strconv.ParseInt(r.URL.Query().Get("r"), 10, 64)
 	id := int(_id)
 	if err != nil {
@@ -130,9 +125,7 @@ func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
 			return
 		case "text/html":
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.Write([]byte(
-				genhtml.Html(m.getText()),
-			))
+			w.Write(genhtml.Html(m.getText()))
 			return
 		case "application/pdf":
 			pdf, err := genPDF(m.Title, m.ID, "live", m.getText(), now())
@@ -147,6 +140,13 @@ func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
 			return
 		}
 	}
+	http.Error(w, `Unsuperted Accept media. You can use: [
+	"application/json",
+	"application/pdf",
+	"text/html",
+	"text/markdown",
+	"text/plain",
+]`, http.StatusNotAcceptable)
 }
 
 // Set the text body of a Memo
@@ -241,7 +241,7 @@ func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 		return
 	}
 
-	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelStd) {
+	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelVisitor) {
 		return
 	}
 
@@ -254,6 +254,74 @@ func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 	m.save()
 }
 
-// func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
-// func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
-// func (a *App) memoCreate(w http.ResponseWriter, r *public.Request){}
+func (a *App) memoReleaseGet(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+
+	if m.Public < PublicRead && a.checkLevel(w, r, public.LevelVisitor) {
+		return
+	}
+
+	rel := a.getRelease(w, &r.Request, m)
+	if rel == nil {
+		return
+	}
+
+	for _, media := range parseQuoting(r.Header.Get("Accept")) {
+		switch media.V {
+		case "text/plain", "text/markdown", "text/*", "*/*":
+			w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
+			w.Write(a.db.GetRaw(rel.Text))
+			return
+		case "text/html":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Write(a.db.GetRaw(rel.Html))
+			return
+		case "application/pdf":
+			w.Header().Set("Content-Type", "application/pdf")
+			w.Write(a.db.GetRaw(rel.Pdf))
+			return
+		}
+	}
+	http.Error(w, `Unsuperted Accept media. You can use: [
+	"application/pdf",
+	"text/html",
+	"text/markdown",
+	"text/plain",
+]`, http.StatusNotAcceptable)
+}
+
+func (a *App) memoReleaseNew(w http.ResponseWriter, r *public.Request) {
+	m := a.getMemo(w, &r.Request)
+	if m == nil {
+		return
+	}
+
+	t := a.getText(w, &r.Request, TitleMax)
+	if t == "" {
+		return
+	}
+
+	text := m.getText()
+	date := now()
+	pdf, err := genPDF(t, m.ID, t, text, date)
+	if err != nil {
+		a.error(w, &r.Request, "PDF genration fail", http.StatusInternalServerError)
+		return
+	}
+
+	re := Release{
+		Title: t,
+		Date:  date,
+		Text:  a.db.New(),
+		Html:  a.db.New(),
+		Pdf:   a.db.New(),
+	}
+	m.Releases = append(m.Releases, &re)
+	m.save()
+	a.db.SetRaw(re.Text, []byte(text))
+	a.db.SetRaw(re.Html, genhtml.Html(text))
+	a.db.SetRaw(re.Pdf, pdf)
+}

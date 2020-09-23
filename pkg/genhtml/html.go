@@ -5,14 +5,14 @@
 package genhtml
 
 import (
+	"bytes"
 	"fmt"
 	"gopkg.in/russross/blackfriday.v2"
 	"html"
 	"regexp"
-	"strings"
 )
 
-func Html(in string) string {
+func Html(in string) []byte {
 	root := blackfriday.New(
 		blackfriday.WithExtensions(blackfriday.CommonExtensions),
 	).Parse([]byte(in))
@@ -28,13 +28,13 @@ func Html(in string) string {
 		}
 	})
 
-	var buff strings.Builder
+	var buff bytes.Buffer
 	root.Walk(func(n *blackfriday.Node, entering bool) blackfriday.WalkStatus {
 		defaultRender(&buff, n, entering)
 		return blackfriday.GoToNext
 	})
 
-	return buff.String()
+	return buff.Bytes()
 }
 
 var renderNodeMap = map[blackfriday.NodeType][2]string{
@@ -50,7 +50,7 @@ var renderNodeMap = map[blackfriday.NodeType][2]string{
 }
 
 // The default render for Html
-func defaultRender(w *strings.Builder, n *blackfriday.Node, entering bool) {
+func defaultRender(w *bytes.Buffer, n *blackfriday.Node, entering bool) {
 	// The node types Document and Softbreak are ignored.
 
 	// Simple tags with an opening and a closing
@@ -170,7 +170,7 @@ var (
 )
 
 // Change ponctuation for French text.
-func frenchSpace(w *strings.Builder, in []byte) {
+func frenchSpace(w *bytes.Buffer, in []byte) {
 	text := frenchSpaceSpaces.ReplaceAllString(string(in), " ")
 	w.WriteString(frenchPonctuation.ReplaceAllStringFunc(text, func(in string) string {
 		switch in {

@@ -5,6 +5,7 @@
 package genhtml
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/alecthomas/chroma"
 	"github.com/alecthomas/chroma/lexers"
@@ -14,7 +15,7 @@ import (
 )
 
 // Render code block
-func htmlCode(w *strings.Builder, n *blackfriday.Node) {
+func htmlCode(w *bytes.Buffer, n *blackfriday.Node) {
 	l := lexers.Get(string(n.CodeBlockData.Info))
 	if l == nil {
 		l = lexers.Fallback

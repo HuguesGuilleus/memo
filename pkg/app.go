@@ -38,6 +38,8 @@ func NewApp() (*App, error) {
 	a.auth.HandleFunc("/memo/get", public.LevelCandidate, a.memoGet)
 	a.auth.HandleFunc("/memo/list", public.LevelVisitor, a.memoList)
 	a.auth.HandleFunc("/memo/public", public.LevelStd, a.memoPublic)
+	a.auth.HandleFunc("/memo/release/get", public.LevelCandidate, a.memoReleaseGet)
+	a.auth.HandleFunc("/memo/release/new", public.LevelVisitor, a.memoReleaseNew)
 	a.auth.HandleFunc("/memo/text", public.LevelCandidate, a.memoText)
 	a.auth.HandleFunc("/memo/title", public.LevelCandidate, a.memoTitle)
 
