@@ -5,6 +5,7 @@
 package memo
 
 import (
+	"encoding/json"
 	"github.com/Arveto/arvetoAuth/pkg/public2"
 	"github.com/HuguesGuilleus/go-db.v1"
 	"log"
@@ -29,6 +30,10 @@ func NewApp() (*App, error) {
 	a.auth.Error = a.error
 
 	a.auth.HandleFunc("/memo/create", public.LevelStd, a.memoCreate)
+	a.auth.HandleFunc("/me", public.LevelCandidate, func(w http.ResponseWriter, r *public.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(r.User)
+	})
 	a.auth.HandleFunc("/memo/delete", public.LevelAdmin, a.memoDelete)
 	a.auth.HandleFunc("/memo/get", public.LevelCandidate, a.memoGet)
 	a.auth.HandleFunc("/memo/list", public.LevelVisitor, a.memoList)
