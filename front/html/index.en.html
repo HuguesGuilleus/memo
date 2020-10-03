@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/style.css">
+	<title>Memo App</title>
+</head>
+
+<body>
+	<nav>
+		<div id=menuGroup>
+			<svg id=menuImg title="Sex" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="200">
+				<defs>
+					<pattern id="one" width="8" height="8">
+						<rect fill="white" x="2" y="2" width="6" height="6" />
+					</pattern>
+					<pattern id="h" width="24" height="8">
+						<rect y="00" width="24" height="8" fill="url(#one)" />
+						<rect x="08" width="24" height="8" fill="url(#one)" />
+						<rect x="16" width="24" height="8" fill="url(#one)" />
+					</pattern>
+				</defs>
+				<rect y="00" width="24" height="24" fill="url(#h)" />
+				<rect y="08" width="24" height="24" fill="url(#h)" />
+				<rect y="16" width="24" height="24" fill="url(#h)" />
+			</svg>
+			<div id=menuContent>
+				<a href="/memo/new" id=newMemo>New memo</a><br>
+				<a href="/logout">Disconect</a>
+			</div>
+		</div>
+
+		<span id=title>Le super document</span>
+		<script src="/app.js"></script>
+	</nav>
+
+	<main id=input>
+		<p id=inputInfo></p>
+		<input type=text id=inputText>
+		<button type=submit id=inputCancel>Cancel</button>
+		<button type=submit id=inputSubmit>OK</button>
+	</main>
+
+	<main id=memoListGroup>
+		<input type=search>
+		<ul id=memoList></ul>
+	</main>
+
+	<main id=memoView>
+		<ol id=memoText contenteditable=true></ol>
+	</main>
+
+</body>
+
+</html>

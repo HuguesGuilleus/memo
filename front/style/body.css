@@ -1,0 +1,52 @@
+/* Arveto Memo
+BSD 3-Clause License
+Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
+
+*[hidden] {
+	display: none !important;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	font-family: text;
+	font-size: x-large;
+	background: #2a2a2e;
+	color: white;
+}
+@font-face {
+	font-family: text;
+	src: url('/font/text.ttf');
+}
+@font-face {
+	font-family: text;
+	font-weight: bold;
+	src: url('/font/bold.ttf');
+}
+
+main {
+	max-width: 90ex;
+	padding: 2ex;
+	margin: auto;
+}
+main > :not(.codeBloc):not(table) {
+	max-width: 70ex;
+}
+
+table {
+	border-collapse: collapse;
+}
+td,
+th {
+	border: solid;
+	padding: 0.5ex;
+}
+
+td {
+	text-align: justify;
+}
+
+p {
+	text-align: justify;
+	text-indent: 4ex;
+}

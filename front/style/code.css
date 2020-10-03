@@ -1,0 +1,68 @@
+/* Arveto Memo
+BSD 3-Clause License
+Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
+
+@font-face {
+	font-family: code;
+	src: url('/font/code.ttf');
+}
+code {
+	font-family: code;
+}
+
+.codeBloc {
+	margin: 1ex 0;
+	padding: 1ex 0;
+	color: #abb2bf;
+	tab-size: 4;
+	-moz-tab-size: 4;
+}
+.codeBloc::marker {
+	color: #737373;
+}
+
+.codeLine {
+	display: list-item;
+	margin: 0 0 0 6.5ex;
+	line-height: 120%;
+	border-left: 0.5ex dodgerblue solid;
+	padding-left: 2ex;
+	list-style: decimal;
+	white-space: pre-wrap;
+	font-family: code;
+}
+.codeLine::marker {
+	color: #737373;
+}
+
+.cComment {
+	font-style: italic;
+	color: #5c6370;
+}
+
+.cKeyword {
+	color: #c678dd;
+}
+
+.cConst {
+	color: #d1c166;
+}
+.cFunc {
+	color: #61aeee;
+}
+
+.cType {
+	color: #66d192;
+}
+
+.cValue {
+	color: #d19a66;
+}
+
+.cString {
+	color: #98c379;
+}
+
+.cName {
+	color: #e06c75;
+}

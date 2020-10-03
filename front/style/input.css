@@ -1,0 +1,34 @@
+/* Arveto Memo
+BSD 3-Clause License
+Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
+
+#inputText {
+	display: block;
+	width: 100%;
+	border: none;
+	border: solid 0.5ex dodgerblue;
+	border-style: solid none;
+	padding: 1ex;
+	background: #38383d;
+	font-size: inherit;
+}
+
+#memoText {
+	max-width: 70ex;
+	padding: 2ex 2ex 2ex 5ex;
+	margin: auto;
+	background: #38383d;
+	font-size: normal;
+}
+#memoText > li {
+	border-left: 0.5ex dodgerblue solid;
+	padding-left: 1ex;
+	tab-size: 4;
+	white-space: pre-wrap;
+}
+
+#memoText > li::marker {
+	color: dodgerblue;
+	font-weight: bold;
+	font-size: smaller;
+}
