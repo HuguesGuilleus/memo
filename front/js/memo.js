@@ -40,7 +40,7 @@ async function memoList() {
 		return group;
 	}
 	let listElements = list.map(m => {
-		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.id);
+		let item = $new(ul, 'li', '', ['memoItem']);
 		createLink(item, m.id, null, m.title);
 
 		let releaseGroup = $new(item, 'div', '', ['memoItemRealseGroup']);
@@ -81,28 +81,34 @@ async function memoNew() {
 
 // Display one memo.
 async function memoEdit(id) {
-	let memoText = $('memoText');
-	while (memoText.children.length) {
-		memoText.children[0].remove();
-	}
-
 	hideMain();
 	$('memoView').hidden = false;
+	$('memoViewContent').hidden = true;
 
-	memoText.innerText = 'load ...';
+	let memoEdit = $('memoEdit');
+	while (memoEdit.children.length) memoEdit.children[0].remove();
+	memoEdit.hidden = false;
+	memoEdit.innerText = 'load ...';
 
 	let meta = await fetchJson(`/memo/get?m=${id}`);
-	meta.upload = new Date(meta.upload);
 	currentMemo = meta;
+	meta.upload = new Date(meta.upload);
 	$('title').innerText = meta.title;
 
 	let text = await fetchText(`/memo/get?m=${id}`);
 	let lines = text.split(/\r?\n/) || [''];
-	memoText.innerText = '';
+	memoEdit.innerText = '';
 
 	lines.forEach((l, i) => {
-		$new(memoText, 'li', `l-${i}`, [], l)
+		$new(memoEdit, 'li', `l-${i}`, [], l)
 	});
+}
+
+function memoEditKey(event) {
+	console.log("event.key:", event, event.key);
+	if (event.key === 'Tab') {
+		event.preventDefault();
+	}
 }
 
 // Save the current memo
@@ -110,7 +116,7 @@ function memoSave() {
 	if (!currentMemo) return;
 
 	let text = '';
-	let memo = $('memoText');
+	let memo = $('memoEdit');
 	for (let i = 0; i < memo.children.length; i++) {
 		text += memo.children[i].innerText + '\n';
 	}
@@ -131,4 +137,37 @@ async function memoEditTile() {
 
 	await fetchText('/memo/title?m=' + currentMemo.id, n);
 	memoGotoView(currentMemo.id);
+}
+
+async function memoView(id, r, mime) {
+	hideMain();
+	$('memoView').hidden = false;
+	$('memoEdit').hidden = true;
+
+	const isr = r !== null;
+	const v = $('memoViewContent');
+	while (v.children.length) v.children[0].remove();
+	v.hidden = false;
+	v.innerText = 'loading ...';
+
+	const meta = await fetchJson(`/memo/get?m=${id}`);
+	document.title = 'Memo: ' + meta.title;
+	$('title').innerText = meta.title;
+
+	const text = await fetch(`/memo/${isr?'release/':''}get?m=${id}${isr?'&r='+r:''}`, {
+		headers: new Headers({
+			'Accept': mime,
+		}),
+	}).then(rep => rep.text());
+
+	switch (mime) {
+	case 'text/plain':
+		v.innerText = text;
+		v.classList.add('textSpace');
+		break;
+	case 'text/html':
+		v.innerHTML = text;
+		v.classList.remove('textSpace');
+		break;
+	}
 }

@@ -10,6 +10,7 @@ input {
 	font-size: inherit;
 	background-color: var(--bg-secondary);
 	color: inherit;
+	font-family: inherit;
 }
 
 button:focus,
@@ -35,25 +36,4 @@ button {
 	margin: 1ex;
 	display: inline-block;
 	border-style: solid;
-}
-
-#memoText {
-	max-width: 70ex;
-	padding: 2ex 2ex 2ex 5ex;
-	margin: auto;
-	font-size: inherit;
-	background: var(--bg-secondary);
-}
-#memoText > li {
-	border-left: 0.5ex var(--cline-focus) solid;
-	padding-left: 1ex;
-	tab-size: 4;
-	-moz-tab-size: 4;
-	white-space: pre-wrap;
-}
-
-#memoText > li::marker {
-	color: var(--cline-focus);
-	font-weight: bold;
-	font-size: smaller;
 }
