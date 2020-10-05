@@ -1,7 +1,6 @@
 /* Arveto Memo
 BSD 3-Clause License
 Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
-
 :root {
 	--bg: hsla(0 0% 20%);
 	--bg-primary: hsla(0 0% 10%);
@@ -9,6 +8,8 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	--cline: hsla(0 0% 30%);
 	--cline-focus: dodgerblue;
 	--cline-invalid: #FB5200;
+	--w: 70ex;
+	--w-large: 100ex;
 }
 
 *[hidden] {
@@ -34,12 +35,21 @@ body {
 }
 
 main {
-	max-width: 90ex;
-	padding: 2ex;
+	max-width: var(--w-large);
 	margin: auto;
+	padding: 2ex;
 }
-main > :not(.codeBloc):not(table) {
-	max-width: 70ex;
+
+#memoViewContent.textSpace,
+main > * > :not(.codeBloc):not(table),
+main#input {
+	max-width: var(--w);
+	margin-right: auto;
+}
+
+#memoViewContent.textSpace {
+	background-color: var(--bg-secondary);
+	padding: 2ex;
 }
 
 table {
@@ -58,4 +68,12 @@ td {
 p {
 	text-align: justify;
 	text-indent: 4ex;
+}
+
+blockquote {
+	max-width: calc(var(--w) - 2.5ex) !important;
+	margin: auto 0;
+	border-left: solid 0.5ex grey;
+	padding-left: 2ex;
+	color: hsla(0 0% 80%);
 }

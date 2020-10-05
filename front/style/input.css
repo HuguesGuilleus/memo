@@ -8,9 +8,9 @@ input {
 	border-style: solid none;
 	padding: 1ex;
 	font-size: inherit;
-	background-color: var(--bg-secondary);
-	color: inherit;
 	font-family: inherit;
+	color: inherit;
+	background-color: var(--bg-secondary);
 }
 
 button:focus,
@@ -28,7 +28,7 @@ input:invalid {
 
 input {
 	display: block;
-	width: 100%;
+	width: min(100%, var(--w));
 	margin: 1ex 0;
 }
 
