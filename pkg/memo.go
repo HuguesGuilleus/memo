@@ -28,12 +28,12 @@ const (
 
 type Memo struct {
 	db       *db.DB
-	ID       string
-	Title    string    `json:"title"`
-	Public   uint      `json:"public"`
-	Text     db.Key    `json:"-"`
-	Update   time.Time `json:"uplaod"`
-	Releases []*Release
+	ID       string     `json:"id"`
+	Title    string     `json:"title"`
+	Public   uint       `json:"public"`
+	Update   time.Time  `json:"uplaod"`
+	Text     db.Key     `json:"-"`
+	Releases []*Release `json:"releases"`
 }
 type Release struct {
 	Title string    `json:"title"`

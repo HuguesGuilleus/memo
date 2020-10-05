@@ -14,7 +14,7 @@ async function memoList() {
 	let list = (await fetchJson('/memo/list')).map(m => {
 		m.uplaod = new Date(m.uplaod);
 		return m;
-	}).sort((m1, m2) => m1.title > m2.title);
+	}).sort((m1, m2) => m1.title.toLowerCase() > m2.title.toLowerCase());
 
 	let ul = $('memoList');
 	while (ul.children.length) ul.children[0].remove();
@@ -31,17 +31,17 @@ async function memoList() {
 		return group;
 	}
 	let listElements = list.map(m => {
-		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.ID);
+		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.id);
 		$e(item, 'click', event => {
 			event.preventDefault();
-			memoGotoView(m.ID);
+			memoGotoView(m.id);
 		});
-		createLink(item, m.ID, '', m.title);
+		createLink(item, m.id, '', m.title);
 
 		let releaseGroup = $new(item, 'div', '', ['memoItemRealseGroup']);
 
-		(m.Releases || []).forEach((r, i) => {
-			createLink(releaseGroup, m.ID, i, r.title);
+		(m.releases || []).forEach((r, i) => {
+			createLink(releaseGroup, m.id, i, r.title);
 		});
 
 		return {
@@ -59,7 +59,7 @@ async function memoList() {
 function memoSearch(v, list) {
 	const ok = new RegExp(v, 'i');
 	list.forEach(e => e.i.hidden = !(
-		ok.test(e.m.title) || (e.m.Releases || []).some(r => ok.test(r.title))
+		ok.test(e.m.title) || (e.m.releases || []).some(r => ok.test(r.title))
 	));
 }
 
@@ -115,7 +115,7 @@ function memoSave() {
 		text += memo.children[i].innerText + '\n';
 	}
 
-	fetch('/memo/text?m=' + currentMemo.ID, {
+	fetch('/memo/text?m=' + currentMemo.id, {
 		method: 'POST',
 		headers: new Headers({
 			'Content-Type': 'text/plain',
@@ -129,6 +129,6 @@ async function memoEditTile() {
 	let n = await inputText('The new memo title:', currentMemo.title);
 	if (!n) return;
 
-	await fetchText('/memo/title?m=' + currentMemo.ID, n);
-	memoGotoView(currentMemo.ID);
+	await fetchText('/memo/title?m=' + currentMemo.id, n);
+	memoGotoView(currentMemo.id);
 }
