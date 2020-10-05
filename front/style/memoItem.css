@@ -1,0 +1,53 @@
+/* Arveto Memo
+BSD 3-Clause License
+Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
+
+#memoList {
+	padding-left: 0;
+}
+
+.memoItem {
+	display: block;
+	margin: 1ex 0;
+	background: var(--bg-primary);
+	color: inherit;
+	text-decoration: none;
+}
+
+.memoItem a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.memoItemRealseGroup {
+	background: var(--bg-secondary);
+}
+
+.memoItemLink {
+	padding: 0.5ex 1ex;
+	display: grid;
+	grid-gap: 1ex;
+	grid-template-columns: 1fr auto auto;
+}
+
+.imgHTML,
+.imgPDF {
+	display: inline-block;
+	height: 1.5em;
+	width: 1.5em;
+	border-radius: 50%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: var(--cline);
+}
+.imgHTML:hover,
+.imgPDF:hover {
+	background-color: var(--cline-focus);
+}
+
+.imgPDF {
+	background-image: url('data:image/svg+xml;base64,PCEtLSBUaGlzIFNvdXJjZSBDb2RlIEZvcm0gaXMgc3ViamVjdCB0byB0aGUgdGVybXMgb2YgdGhlIE1vemlsbGEgUHVibGljCgktIExpY2Vuc2UsIHYuIDIuMC4gSWYgYSBjb3B5IG9mIHRoZSBNUEwgd2FzIG5vdCBkaXN0cmlidXRlZCB3aXRoIHRoaXMKCS0gZmlsZSwgWW91IGNhbiBvYnRhaW4gb25lIGF0IGh0dHA6Ly9tb3ppbGxhLm9yZy9NUEwvMi4wLy4gLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xNCA1aC0xVjFhMSAxIDAgMCAwLTEtMUg0YTEgMSAwIDAgMC0xIDF2NEgyYTIgMiAwIDAgMC0yIDJ2NWgzdjNhMSAxIDAgMCAwIDEgMWg4YTEgMSAwIDAgMCAxLTF2LTNoM1Y3YTIgMiAwIDAgMC0yLTJ6TTIuNSA4YS41LjUgMCAxIDEgLjUtLjUuNS41IDAgMCAxLS41LjV6bTkuNSA3SDR2LTVoOHptMC0xMEg0VjFoOHptLTYuNSA3aDRhLjUuNSAwIDAgMCAwLTFoLTRhLjUuNSAwIDEgMCAwIDF6bTAgMmg1YS41LjUgMCAwIDAgMC0xaC01YS41LjUgMCAxIDAgMCAxeiIvPjwvc3ZnPg==');
+}
+.imgHTML {
+	background-image: url('data:image/svg+xml;base64,PCEtLSBUaGlzIFNvdXJjZSBDb2RlIEZvcm0gaXMgc3ViamVjdCB0byB0aGUgdGVybXMgb2YgdGhlIE1vemlsbGEgUHVibGljCgktIExpY2Vuc2UsIHYuIDIuMC4gSWYgYSBjb3B5IG9mIHRoZSBNUEwgd2FzIG5vdCBkaXN0cmlidXRlZCB3aXRoIHRoaXMKCS0gZmlsZSwgWW91IGNhbiBvYnRhaW4gb25lIGF0IGh0dHA6Ly9tb3ppbGxhLm9yZy9NUEwvMi4wLy4gLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik02LjA1MiAxLjEzTDEuMTY0IDUuNTdhLjUuNSAwIDAgMCAwIC43NGw1IDQuNTZhLjUuNSAwIDAgMCAuNjczLS43NGwtNS00LjU1OXYuNzRsNC44ODctNC40NGEuNS41IDAgMCAwLS42NzItLjc0MXptNC44OTYgMTMuNzRsNC44ODgtNC40NGEuNS41IDAgMCAwIDAtLjc0bC01LTQuNTZhLjUuNSAwIDEgMC0uNjczLjc0bDUgNC41NTl2LS43NGwtNC44ODcgNC40NGEuNS41IDAgMCAwIC42NzIuNzQxeiIvPjwvc3ZnPg==');
+}

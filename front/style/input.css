@@ -2,33 +2,58 @@
 BSD 3-Clause License
 Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
-#inputText {
-	display: block;
-	width: 100%;
-	border: none;
-	border: solid 0.5ex dodgerblue;
+button,
+input {
+	border: 0.5ex var(--cline);
 	border-style: solid none;
 	padding: 1ex;
-	background: #38383d;
 	font-size: inherit;
+	background-color: var(--bg-secondary);
+	color: inherit;
+}
+
+button:focus,
+button:hover,
+input:focus,
+input:hover {
+	background-color: var(--bg-primary);
+	border-color: var(--cline-focus);
+}
+
+input:invalid {
+	border-color: var(--cline-invalid);
+	box-shadow: none;
+}
+
+input {
+	display: block;
+	width: 100%;
+	margin: 1ex 0;
+}
+
+button {
+	margin: 1ex;
+	display: inline-block;
+	border-style: solid;
 }
 
 #memoText {
 	max-width: 70ex;
 	padding: 2ex 2ex 2ex 5ex;
 	margin: auto;
-	background: #38383d;
-	font-size: normal;
+	font-size: inherit;
+	background: var(--bg-secondary);
 }
 #memoText > li {
-	border-left: 0.5ex dodgerblue solid;
+	border-left: 0.5ex var(--cline-focus) solid;
 	padding-left: 1ex;
 	tab-size: 4;
+	-moz-tab-size: 4;
 	white-space: pre-wrap;
 }
 
 #memoText > li::marker {
-	color: dodgerblue;
+	color: var(--cline-focus);
 	font-weight: bold;
 	font-size: smaller;
 }

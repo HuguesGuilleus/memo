@@ -2,6 +2,15 @@
 BSD 3-Clause License
 Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
+:root {
+	--bg: hsla(0 0% 20%);
+	--bg-primary: hsla(0 0% 10%);
+	--bg-secondary: hsla(0 0% 15%);
+	--cline: hsla(0 0% 30%);
+	--cline-focus: dodgerblue;
+	--cline-invalid: #FB5200;
+}
+
 *[hidden] {
 	display: none !important;
 }
@@ -11,7 +20,7 @@ body {
 	margin: 0;
 	font-family: text;
 	font-size: x-large;
-	background: #2a2a2e;
+	background: var(--bg);
 	color: white;
 }
 @font-face {

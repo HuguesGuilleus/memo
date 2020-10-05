@@ -4,7 +4,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
 nav {
 	padding: 1ex;
-	background: #0c0c0d;
+	background: var(--bg-primary);
 }
 #title {
 	font-weight: bold;

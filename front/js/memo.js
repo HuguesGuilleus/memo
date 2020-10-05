@@ -19,20 +19,30 @@ async function memoList() {
 	let ul = $('memoList');
 	while (ul.children.length) ul.children[0].remove();
 
+	// Create a link for one memo or release and HTML+PDF button.
+	function createLink(parent, id, release, title) {
+		let group = $new(parent, 'div', '', ['memoItemLink']);
+		$anchor(group, 'name', ['memoItemLinkName'], title,
+			`/memo/${typeof release==='number'?'release/':''}view?m=${id}${typeof release==='number'?'&r='+release:''}`
+		);
+		// TODO: Download URL
+		$anchor(group, '', ['memoItemLinkImg', 'imgPDF'], '', '/d').title = 'Download PDF';
+		$anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '', '/d').title = 'Download HTML';
+		return group;
+	}
+
 	list.forEach(m => {
 		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.ID);
 		$e(item, 'click', event => {
 			event.preventDefault();
 			memoGotoView(m.ID);
 		});
-		$new(item, 'div', '', ['memoItemTitle'], m.title);
-		$anchor(item, '', 'memoItemHTML', '', '/memo/html?m=' + m.ID).title = 'View HTML';
-		$anchor(item, '', 'memoItemPDF', '', '/memo/pdf?m=' + m.ID).title = 'Download PDF';
+		createLink(item, m.ID, '', m.title);
+
+		let releaseGroup = $new(item, 'div', '', ['memoItemRealseGroup']);
+
 		(m.Releases || []).forEach((r, i) => {
-			let rg = $new(item, 'div', '', ['memoItemRealse'], '');
-			$new(rg, 'div', '', 'memoItemRealseTitle', r.title);
-			$anchor(rg, '', 'memoItemHTML', '', `/memo/release/html?m=${m.ID}&r=${i}`).title = 'View HTML';
-			$anchor(rg, '', 'memoItemPDF', '', `/memo/release/pdf?m=${m.ID}&r=${i}`).title = 'Download PDF';
+			createLink(releaseGroup, m.ID, i, r.title);
 		});
 	});
 }
