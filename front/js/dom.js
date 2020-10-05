@@ -79,6 +79,15 @@ function $qsa(q) {
 	return Array.from(document.querySelectorAll(q));
 }
 
+// On click onver a, add a history state and call main.
+function $goto(a) {
+	a.addEventListener('click', event => {
+		event.preventDefault();
+		history.pushState({}, '', a.href);
+		main();
+	});
+}
+
 async function fetchText(url, body, opt) {
 	if (!opt) {
 		opt = {

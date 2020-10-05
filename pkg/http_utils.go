@@ -18,6 +18,17 @@ import (
 
 func now() time.Time { return time.Now().UTC().Truncate(time.Second) }
 
+// Like parseQuoting but return a list of string that begin with fisrt.
+func parseQuotingList(mediarange, first string) []string {
+	q := parseQuoting(mediarange)
+	list := make([]string, len(q)+1)
+	list[0] = first
+	for i, q := range q {
+		list[i+1] = q.V
+	}
+	return list
+}
+
 type httpQ struct {
 	V string
 	Q float64

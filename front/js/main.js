@@ -19,12 +19,7 @@ function main() {
 
 window.addEventListener('popstate', main);
 document.addEventListener("DOMContentLoaded", () => {
-	$qsa('a.goto').forEach(a => a.addEventListener('click', event => {
-		event.preventDefault();
-		history.pushState({}, '', a.href);
-		main();
-	}));
-
+	$qsa('a.goto').forEach(a => $goto(a));
 	main();
 }, {
 	once: true,

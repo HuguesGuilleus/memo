@@ -21,25 +21,29 @@ async function memoList() {
 
 	// Create a link for one memo or release and HTML+PDF button.
 	function createLink(parent, id, release, title) {
-		let group = $new(parent, 'div', '', ['memoItemLink']);
-		$anchor(group, 'name', ['memoItemLinkName'], title,
-			`/memo/${typeof release==='number'?'release/':''}view?m=${id}${typeof release==='number'?'&r='+release:''}`
-		);
-		// TODO: Download URL
-		$anchor(group, '', ['memoItemLinkImg', 'imgPDF'], '', '/d').title = 'Download PDF';
-		$anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '', '/d').title = 'Download HTML';
+		const isr = release !== null;
+		const group = $new(parent, 'div', '', ['memoItemLink']);
+
+		$goto($anchor(group, 'name', ['memoItemLinkName'], title,
+			`/memo/${isr?'release/':''}view?m=${id}${isr?'&r='+release:''}`
+		));
+
+		const html = $anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '',
+			`/memo/${isr?'release/':''}html?m=${id}${isr?'&r='+release:''}`);
+		html.title = 'View HTML';
+		$goto(html);
+
+		$anchor(group, '', ['memoItemLinkImg', 'imgPDF'], '',
+				`/memo/${isr?'release/':''}get?f=pdf&m=${id}${isr?'&r='+release:''}`)
+			.title = 'Download PDF';
+
 		return group;
 	}
 	let listElements = list.map(m => {
 		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.id);
-		$e(item, 'click', event => {
-			event.preventDefault();
-			memoGotoView(m.id);
-		});
-		createLink(item, m.id, '', m.title);
+		createLink(item, m.id, null, m.title);
 
 		let releaseGroup = $new(item, 'div', '', ['memoItemRealseGroup']);
-
 		(m.releases || []).forEach((r, i) => {
 			createLink(releaseGroup, m.id, i, r.title);
 		});

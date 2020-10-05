@@ -10,6 +10,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/Arveto/arvetoAuth/pkg/public2"
 	"github.com/HuguesGuilleus/go-db.v1"
 	"log"
@@ -113,32 +114,32 @@ func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
 		return
 	}
 
-	for _, media := range parseQuoting(r.Header.Get("Accept")) {
-		switch media.V {
+	for _, media := range parseQuotingList(r.Header.Get("Accept"), r.URL.Query().Get("f")) {
+		switch media {
 		case "*/*", "application/*", "application/json":
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(m)
-			return
 		case "text/plain", "text/markdown", "text/*":
 			w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
 			w.Write([]byte(m.getText()))
-			return
 		case "text/html":
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.Write(genhtml.Html(m.getText()))
-			return
-		case "application/pdf":
+		case "application/pdf", "pdf":
 			pdf, err := genPDF(m.Title, m.ID, "live", m.getText(), now())
 			if err != nil {
 				log.Println("[PDF FAIL]", err)
-				a.error(w, &r.Request, "PDF generation fail", http.StatusInternalServerError)
+				http.Error(w, "PDF generation fail", http.StatusInternalServerError)
 				return
 			}
-
+			w.Header().Set("Content-Disposition",
+				fmt.Sprintf(`attachment; filename=%q`, m.Title+now().Format("-2006-01-02.pdf")))
 			w.Header().Set("Content-Type", "application/pdf")
 			w.Write(pdf)
-			return
+		default:
+			continue
 		}
+		return
 	}
 	http.Error(w, `Unsuperted Accept media. You can use: [
 	"application/json",
@@ -269,8 +270,8 @@ func (a *App) memoReleaseGet(w http.ResponseWriter, r *public.Request) {
 		return
 	}
 
-	for _, media := range parseQuoting(r.Header.Get("Accept")) {
-		switch media.V {
+	for _, media := range parseQuotingList(r.Header.Get("Accept"), r.URL.Query().Get("f")) {
+		switch media {
 		case "text/plain", "text/markdown", "text/*", "*/*":
 			w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
 			w.Write(a.db.GetRaw(rel.Text))
@@ -279,7 +280,9 @@ func (a *App) memoReleaseGet(w http.ResponseWriter, r *public.Request) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.Write(a.db.GetRaw(rel.Html))
 			return
-		case "application/pdf":
+		case "application/pdf", "pdf":
+			w.Header().Set("Content-Disposition",
+				fmt.Sprintf(`attachment; filename=%q`, m.Title+"-"+rel.Title+".pdf"))
 			w.Header().Set("Content-Type", "application/pdf")
 			w.Write(a.db.GetRaw(rel.Pdf))
 			return
