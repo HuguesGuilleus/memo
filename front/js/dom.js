@@ -74,6 +74,11 @@ function $e(el, e, cb) {
 	}
 }
 
+// document.querySelectorAll(q) into a Array
+function $qsa(q) {
+	return Array.from(document.querySelectorAll(q));
+}
+
 async function fetchText(url, body, opt) {
 	if (!opt) {
 		opt = {

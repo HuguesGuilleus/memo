@@ -18,14 +18,20 @@ function main() {
 }
 
 window.addEventListener('popstate', main);
-document.addEventListener("DOMContentLoaded", main, {
+document.addEventListener("DOMContentLoaded", () => {
+	$qsa('a.goto').forEach(a => a.addEventListener('click', event => {
+		event.preventDefault();
+		history.pushState({}, '', a.href);
+		main();
+	}));
+
+	main();
+}, {
 	once: true,
 });
 
 window.addEventListener('keydown', e => {
-	console.log('sauvegarde ...');
 	if (e.key !== 's' || !e.ctrlKey || !currentMemo) return;
-	console.log('oui!');
 	e.preventDefault();
 	memoSave();
 });
