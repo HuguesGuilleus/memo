@@ -30,8 +30,7 @@ async function memoList() {
 		$anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '', '/d').title = 'Download HTML';
 		return group;
 	}
-
-	list.forEach(m => {
+	let listElements = list.map(m => {
 		let item = $anchor(ul, '', ['memoItem'], '', '/memo/view?m=' + m.ID);
 		$e(item, 'click', event => {
 			event.preventDefault();
@@ -44,7 +43,24 @@ async function memoList() {
 		(m.Releases || []).forEach((r, i) => {
 			createLink(releaseGroup, m.ID, i, r.title);
 		});
+
+		return {
+			i: item,
+			m: m,
+		};
 	});
+
+	let s = $('memoListSearch');
+	s.value = '';
+	$e(s, 'input', () => memoSearch(s.value, listElements))
+}
+
+// Hide no match memo.
+function memoSearch(v, list) {
+	const ok = new RegExp(v, 'i');
+	list.forEach(e => e.i.hidden = !(
+		ok.test(e.m.title) || (e.m.Releases || []).some(r => ok.test(r.title))
+	));
 }
 
 // Search one memo in the list of memo.
