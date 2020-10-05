@@ -41,7 +41,7 @@ func NewApp() (*App, error) {
 		htmlApp.ServeHTTP(w, r)
 	})
 	a.auth.Mux.Handle("/memo/new", htmlApp)
-	a.auth.Mux.Handle("/memo/view", htmlApp)
+	a.auth.Mux.Handle("/memo/edit", htmlApp)
 	a.auth.Mux.Handle("/memo/html", htmlApp)
 	a.auth.Mux.Handle("/memo/release/html", htmlApp)
 	a.auth.Mux.Handle("/memo/release/view", htmlApp)

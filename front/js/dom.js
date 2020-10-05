@@ -42,7 +42,6 @@ function inputText(info, value) {
 function $new(parent, t, id, cl, text) {
 	let el = document.createElement(t);
 	if (id) el.id = id;
-	// for (let c of (cl || [])) {
 	if (typeof cl === 'string') cl = [cl];
 	for (let c of (cl || [])) {
 		el.classList.add(c);

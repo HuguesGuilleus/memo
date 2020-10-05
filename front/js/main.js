@@ -8,9 +8,9 @@ function main() {
 		memoList();
 	};
 	({
-		'/memo/view': () => {
+		'/memo/edit': () => {
 			let m = new URLSearchParams(location.search).get('m');
-			m ? memoView(m) : def();
+			m ? memoEdit(m) : def();
 		},
 		'/memo/new': memoNew,
 		'/': memoList,

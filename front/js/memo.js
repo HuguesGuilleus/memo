@@ -25,7 +25,7 @@ async function memoList() {
 		const group = $new(parent, 'div', '', ['memoItemLink']);
 
 		$goto($anchor(group, 'name', ['memoItemLinkName'], title,
-			`/memo/${isr?'release/':''}view?m=${id}${isr?'&r='+release:''}`
+			`/memo/${isr?'release/view':'edit'}?m=${id}${isr?'&r='+release:''}`
 		));
 
 		const html = $anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '',
@@ -75,16 +75,12 @@ async function memoNew() {
 	let title = await inputText('The new memo title:', '');
 	if (!title) return;
 	let id = await fetchText('/memo/create', title);
-	memoGotoView(id);
-}
-
-function memoGotoView(id) {
-	history.pushState({}, `Memo: ${title}`, '/memo/view?m=' + id);
-	memoView(id);
+	history.pushState({}, `Memo: ${title}`, '/memo/edit?m=' + id);
+	memoEdit(id);
 }
 
 // Display one memo.
-async function memoView(id) {
+async function memoEdit(id) {
 	let memoText = $('memoText');
 	while (memoText.children.length) {
 		memoText.children[0].remove();
