@@ -70,6 +70,12 @@ func (b *Builder) AddLine(line string) {
 	b.NewLine()
 }
 
+// Like WriteString
+func (b *Builder) Write(text []byte) (int, error) {
+	b.WriteString(string(text))
+	return len(text), nil
+}
+
 // Add the text to the buffer. No new line at the end. If it's the last line
 // of the document, call Builder.CommitLine()
 func (b *Builder) WriteString(text string) {
