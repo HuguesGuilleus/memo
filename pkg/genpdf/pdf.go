@@ -32,6 +32,10 @@ type Config struct {
 
 	// Return the header in one line. If nil a other function will be used
 	head func(page int, sum int) string
+
+	// This function it's called in CreatePDF() and the result at each line
+	// begin.
+	BeginLine func() func(first bool) string
 }
 
 // Init the list of runes into the font. And headLine.
@@ -61,6 +65,9 @@ type Generator struct {
 
 // Create Create a PDF.
 func (c *Config) CreatePDF() Generator {
+	beginer := c.BeginLine()
+	l := beginer(true)
+
 	return Generator{
 		Builder: Builder{
 			TabLen:      c.TabLen,
@@ -68,6 +75,9 @@ func (c *Config) CreatePDF() Generator {
 			PageLen:     c.PageLen,
 			RuneReplace: c.RuneReplace,
 			RuneCheck:   c.runeExist,
+			BeginLine:   beginer,
+			line:        l,
+			size:        stringLen(l),
 		},
 		c: c,
 	}

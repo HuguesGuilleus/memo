@@ -49,8 +49,11 @@ type Builder struct {
 	RuneCheck func(rune) bool
 	// The rune to replace unchecked rune
 	RuneReplace rune
-	//
-	unchechedRunes map[rune]bool
+	// Runes that do not pass RuneCheck test.
+	uncheckedRunes map[rune]bool
+
+	// Add a string at the begin of each line.
+	BeginLine func(first bool) string
 }
 
 // Add miltiples lines.
@@ -78,10 +81,10 @@ func (b *Builder) WriteString(text string) {
 // Check the rune of map it the add it to the builder.
 func (b *Builder) Map(r rune) {
 	if b.RuneCheck != nil && !b.RuneCheck(r) {
-		if b.unchechedRunes == nil {
-			b.unchechedRunes = make(map[rune]bool, 1)
+		if b.uncheckedRunes == nil {
+			b.uncheckedRunes = make(map[rune]bool, 1)
 		}
-		b.unchechedRunes[r] = true
+		b.uncheckedRunes[r] = true
 		b.add(b.RuneReplace)
 		return
 	}
@@ -89,8 +92,8 @@ func (b *Builder) Map(r rune) {
 }
 
 func (b *Builder) UncheckedRunes() []rune {
-	all := make([]rune, 0, len(b.unchechedRunes))
-	for r := range b.unchechedRunes {
+	all := make([]rune, 0, len(b.uncheckedRunes))
+	for r := range b.uncheckedRunes {
 		all = append(all, r)
 	}
 	sort.Slice(all, func(i int, j int) bool { return all[i] < all[j] })
@@ -145,18 +148,19 @@ func (b *Builder) NewLine() {
 	}
 	b.Lines = append(b.Lines, b.line)
 
-	b.line = ""
+	b.line = b.BeginLine(true)
 	b.space = ""
 	b.word = ""
-	b.size = 0
+	b.wordSize = 0
+	b.size = stringLen(b.line)
 }
 
 func (b *Builder) commitWorld() {
 	if b.size > b.LineLen {
 		b.Lines = append(b.Lines, b.line)
-		b.line = ""
+		b.line = b.BeginLine(false)
 		b.space = ""
-		b.size = 0
+		b.size = stringLen(b.line)
 	} else {
 		b.line += b.space
 		b.space = ""
@@ -169,20 +173,23 @@ func (b *Builder) commitWorld() {
 			b.size++
 			if b.size > b.LineLen {
 				b.Lines = append(b.Lines, b.line)
-				b.line = ""
+				b.line = b.BeginLine(false)
 				b.word = ""
-				b.size = 0
+				b.wordSize = 0
+				b.size = stringLen(b.line)
 			}
 		}
 	} else if b.size+l > b.LineLen {
 		b.Lines = append(b.Lines, b.line)
-		b.line = b.word
+		b.line = b.BeginLine(false) + b.word
 		b.space = ""
 		b.word = ""
-		b.size = l
+		b.wordSize = 0
+		b.size = stringLen(b.line)
 	} else {
 		b.line += b.word
 		b.size += l
 		b.word = ""
+		b.wordSize = 0
 	}
 }
