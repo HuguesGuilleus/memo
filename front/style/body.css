@@ -52,6 +52,16 @@ main#input {
 	padding: 2ex;
 }
 
+.badge {
+	margin: 0 1ex;
+	border-radius: 1ex;
+	padding: 0 0.8ex;
+	font-size: 65%;
+	font-weight: bold;
+	background: var(--cline);
+	color: white;
+}
+
 table {
 	border-collapse: collapse;
 }

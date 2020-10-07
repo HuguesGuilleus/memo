@@ -32,7 +32,7 @@ type Memo struct {
 	ID       string     `json:"id"`
 	Title    string     `json:"title"`
 	Public   uint       `json:"public"`
-	Update   time.Time  `json:"uplaod"`
+	Update   time.Time  `json:"update"`
 	Text     db.Key     `json:"-"`
 	Releases []*Release `json:"releases"`
 }

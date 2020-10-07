@@ -29,6 +29,9 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	grid-gap: 1ex;
 	grid-template-columns: 1fr auto auto;
 }
+.memoItemLinkName:hover {
+	color: dodgerblue;
+}
 
 .imgHTML,
 .imgPDF {

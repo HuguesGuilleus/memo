@@ -2,6 +2,10 @@
 BSD 3-Clause License
 Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
+const PUBLIC_NO = 0,
+	PUBLIC_READ = 1,
+	PUBLIC_WRITE = 2;
+
 var memoID = null;
 var currentMemo = null;
 
@@ -13,7 +17,11 @@ async function memoList() {
 
 	waiter.on();
 	let list = (await fetchJson('/memo/list')).map(m => {
-		m.uplaod = new Date(m.uplaod);
+		m.update = new Date(m.update);
+		m.releases = (m.releases || []).map(r => {
+			r.date = new Date(r.date);
+			return r;
+		})
 		return m;
 	}).sort((m1, m2) => m1.title.toLowerCase() > m2.title.toLowerCase());
 	waiter.off();
@@ -22,13 +30,22 @@ async function memoList() {
 	while (ul.children.length) ul.children[0].remove();
 
 	// Create a link for one memo or release and HTML+PDF button.
-	function createLink(parent, id, release, title) {
+	function createLink(parent, id, release, title, date, pub) {
 		const isr = release !== null;
 		const group = $new(parent, 'div', '', ['memoItemLink']);
 
-		$goto($anchor(group, 'name', ['memoItemLinkName'], title,
+		const l = $anchor(group, 'name', ['memoItemLinkName'], title,
 			`/memo/${isr?'release/view':'edit'}?m=${id}${isr?'&r='+release:''}`
-		));
+		);
+		$goto(l);
+		$new(l, 'span', '', 'badge', date.toLocaleDateString()).title = date.toLocaleString();
+		switch (pub) {
+		case PUBLIC_READ:
+			$new(l, 'span', '', 'badge', 'Read').title = 'Every on who had this link can view this memo.';
+			break;
+		case PUBLIC_WRITE:
+			$new(l, 'span', '', 'badge', 'Write').title = 'Every on who had this link can view and edit this memo.';
+		}
 
 		const html = $anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '',
 			`/memo/${isr?'release/':''}html?m=${id}${isr?'&r='+release:''}`);
@@ -43,11 +60,11 @@ async function memoList() {
 	}
 	const listElements = list.map(m => {
 		let item = $new(ul, 'li', '', ['memoItem']);
-		createLink(item, m.id, null, m.title);
+		createLink(item, m.id, null, m.title, m.update, m.public);
 
 		let releaseGroup = $new(item, 'div', '', ['memoItemRealseGroup']);
-		(m.releases || []).forEach((r, i) => {
-			createLink(releaseGroup, m.id, i, r.title);
+		m.releases.forEach((r, i) => {
+			createLink(releaseGroup, m.id, i, r.title, r.date, PUBLIC_NO);
 		});
 
 		return {
