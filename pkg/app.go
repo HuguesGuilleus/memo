@@ -47,6 +47,8 @@ func NewApp() (*App, error) {
 	a.auth.Mux.Handle("/memo/release/view", htmlApp)
 	a.auth.Mux.Handle("/app.js", static.Js().Func(front.Js))
 	a.auth.Mux.Handle("/style.css", static.Css().Func(front.Style))
+	a.auth.Mux.Handle("/icon.webp", static.WebP().Func(front.IconIcon))
+	a.auth.Mux.Handle("/icon-96.png", static.Png().Func(front.IconIcon96))
 	a.auth.Mux.Handle("/font/bold.ttf", static.New("font/ttf", nil).Func(front.FontBold))
 	a.auth.Mux.Handle("/font/code.ttf", static.New("font/ttf", nil).Func(front.FontCode))
 	a.auth.Mux.Handle("/font/text.ttf", static.New("font/ttf", nil).Func(front.FontText))
