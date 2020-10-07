@@ -86,7 +86,13 @@ func (b *Builder) WriteString(text string) {
 
 // Check the rune of map it the add it to the builder.
 func (b *Builder) Map(r rune) {
-	if b.RuneCheck != nil && !b.RuneCheck(r) {
+	if r < '!' {
+		switch r {
+		case '\n', '\f', '\t', ' ':
+		default:
+			return
+		}
+	} else if b.RuneCheck != nil && !b.RuneCheck(r) {
 		if b.uncheckedRunes == nil {
 			b.uncheckedRunes = make(map[rune]bool, 1)
 		}
