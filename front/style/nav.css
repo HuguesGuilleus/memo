@@ -32,3 +32,14 @@ nav {
 	width: 30ex;
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
+
+#wait {
+	margin: 5ex auto 2ex;
+	max-width: calc(var(--w-large) - 2ex);
+	border: 0.5ex;
+	border-style: solid none;
+	padding: 1ex;
+	color: tomato;
+	text-indent: 0;
+	text-align: center;
+}

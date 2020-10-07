@@ -11,12 +11,14 @@ async function memoList() {
 	hideMain();
 	$('memoListGroup').hidden = false;
 
+	waiter.on();
 	let list = (await fetchJson('/memo/list')).map(m => {
 		m.uplaod = new Date(m.uplaod);
 		return m;
 	}).sort((m1, m2) => m1.title.toLowerCase() > m2.title.toLowerCase());
+	waiter.off();
 
-	let ul = $('memoList');
+	const ul = $('memoList');
 	while (ul.children.length) ul.children[0].remove();
 
 	// Create a link for one memo or release and HTML+PDF button.
@@ -39,7 +41,7 @@ async function memoList() {
 
 		return group;
 	}
-	let listElements = list.map(m => {
+	const listElements = list.map(m => {
 		let item = $new(ul, 'li', '', ['memoItem']);
 		createLink(item, m.id, null, m.title);
 
@@ -54,7 +56,7 @@ async function memoList() {
 		};
 	});
 
-	let s = $('memoListSearch');
+	const s = $('memoListSearch');
 	s.value = '';
 	$e(s, 'input', () => memoSearch(s.value, listElements))
 }
@@ -82,23 +84,23 @@ async function memoNew() {
 // Display one memo.
 async function memoEdit(id) {
 	hideMain();
-	$('memoView').hidden = false;
-	$('memoViewContent').hidden = true;
 
-	let memoEdit = $('memoEdit');
-	while (memoEdit.children.length) memoEdit.children[0].remove();
-	memoEdit.hidden = false;
-	memoEdit.innerText = 'load ...';
+	const [meta, text] = await waiter.all(
+		fetchJson(`/memo/get?m=${id}`),
+		fetchText(`/memo/get?m=${id}`)
+	);
 
-	let meta = await fetchJson(`/memo/get?m=${id}`);
 	currentMemo = meta;
 	meta.upload = new Date(meta.upload);
 	$('title').innerText = meta.title;
 
-	let text = await fetchText(`/memo/get?m=${id}`);
-	let lines = text.split(/\r?\n/) || [''];
-	memoEdit.innerText = '';
+	const memoEdit = $('memoEdit');
+	while (memoEdit.children.length) memoEdit.children[0].remove();
+	memoEdit.hidden = false;
+	$('memoViewContent').hidden = true;
+	$('memoView').hidden = false;
 
+	const lines = text.split(/\r?\n/) || [''];
 	lines.forEach((l, i) => {
 		$new(memoEdit, 'li', `l-${i}`, [], l)
 	});
@@ -112,7 +114,7 @@ function memoEditKey(event) {
 }
 
 // Save the current memo
-function memoSave() {
+async function memoSave() {
 	if (!currentMemo) return;
 
 	let text = '';
@@ -121,13 +123,15 @@ function memoSave() {
 		text += memo.children[i].innerText + '\n';
 	}
 
-	fetch('/memo/text?m=' + currentMemo.id, {
+	waiter.on();
+	await fetch('/memo/text?m=' + currentMemo.id, {
 		method: 'POST',
 		headers: new Headers({
 			'Content-Type': 'text/plain',
 		}),
 		body: text,
 	});
+	waiter.off();
 }
 
 async function memoEditTile() {
@@ -135,30 +139,33 @@ async function memoEditTile() {
 	let n = await inputText('The new memo title:', currentMemo.title);
 	if (!n) return;
 
+	waiter.on();
 	await fetchText('/memo/title?m=' + currentMemo.id, n);
+	waiter.off();
 	memoGotoView(currentMemo.id);
 }
 
 async function memoView(id, r, mime) {
-	hideMain();
-	$('memoView').hidden = false;
-	$('memoEdit').hidden = true;
-
 	const isr = r !== null;
-	const v = $('memoViewContent');
-	while (v.children.length) v.children[0].remove();
-	v.hidden = false;
-	v.innerText = 'loading ...';
+	hideMain();
 
-	const meta = await fetchJson(`/memo/get?m=${id}`);
+	const [meta, text] = await waiter.all(
+		fetchJson(`/memo/get?m=${id}`),
+		fetch(`/memo/${isr?'release/':''}get?m=${id}${isr?'&r='+r:''}`, {
+			headers: new Headers({
+				'Accept': mime,
+			}),
+		}).then(rep => rep.text())
+	);
+
 	document.title = 'Memo: ' + meta.title;
 	$('title').innerText = meta.title;
 
-	const text = await fetch(`/memo/${isr?'release/':''}get?m=${id}${isr?'&r='+r:''}`, {
-		headers: new Headers({
-			'Accept': mime,
-		}),
-	}).then(rep => rep.text());
+	const v = $('memoViewContent');
+	while (v.children.length) v.children[0].remove();
+	v.hidden = false;
+	$('memoView').hidden = false;
+	$('memoEdit').hidden = true;
 
 	switch (mime) {
 	case 'text/plain':
