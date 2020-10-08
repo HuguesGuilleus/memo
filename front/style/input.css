@@ -39,3 +39,7 @@ button {
 	display: inline-block;
 	border-style: solid;
 }
+
+.firstLineInput {
+	margin-left: 0;
+}
