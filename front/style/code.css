@@ -27,8 +27,8 @@ code {
 	display: list-item;
 	margin: 0 0 0 6.5ex;
 	line-height: 120%;
-	border-left: 0.5ex dodgerblue solid;
-	padding-left: 2ex;
+	border-left: var(--l1) dodgerblue solid;
+	padding-left: var(--sp);
 	list-style: decimal;
 	white-space: pre-wrap;
 	font-family: code;

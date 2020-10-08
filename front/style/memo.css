@@ -11,7 +11,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	background: var(--bg-secondary);
 }
 #memoEdit > li {
-	border-left: 0.5ex var(--cline-focus) solid;
+	border-left: var(--l1) var(--cline-focus) solid;
 	padding-left: 1ex;
 	tab-size: 4;
 	-moz-tab-size: 4;

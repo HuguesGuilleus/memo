@@ -10,6 +10,9 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	--cline-invalid: #FB5200;
 	--w: 70ex;
 	--w-large: 100ex;
+	--l1: 0.5ex;
+	--l2: 0.2ex;
+	--sp: 2ex;
 }
 
 *[hidden] {
@@ -36,8 +39,8 @@ body {
 
 main {
 	max-width: var(--w-large);
-	margin: auto;
-	padding: 2ex;
+	margin: var(--sp) auto;
+	padding: var(--sp);
 }
 
 #memoViewContent.textSpace,
@@ -49,7 +52,7 @@ main#input {
 
 #memoViewContent.textSpace {
 	background-color: var(--bg-secondary);
-	padding: 2ex;
+	padding: var(--sp);
 }
 
 .badge {
@@ -64,6 +67,7 @@ main#input {
 
 table {
 	border-collapse: collapse;
+	margin: 2ex 0;
 }
 td,
 th {
@@ -83,7 +87,7 @@ p {
 blockquote {
 	max-width: calc(var(--w) - 2.5ex) !important;
 	margin: auto 0;
-	border-left: solid 0.5ex grey;
+	border-left: solid var(--l1) grey;
 	padding-left: 2ex;
 	color: hsla(0 0% 80%);
 }

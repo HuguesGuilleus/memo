@@ -4,7 +4,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
 button,
 input {
-	border: 0.5ex var(--cline);
+	border: var(--l1) var(--cline);
 	border-style: solid none;
 	padding: 1ex;
 	font-size: inherit;
@@ -19,16 +19,18 @@ input:focus,
 input:hover {
 	background-color: var(--bg-primary);
 	border-color: var(--cline-focus);
+	color: var(--cline-focus);
 }
 
 input:invalid {
 	border-color: var(--cline-invalid);
+	color: var(--cline-invalid);
 	box-shadow: none;
 }
 
 input {
 	display: block;
-	width: min(100%, var(--w));
+	width: calc(100% - var(--sp));
 	margin: 1ex 0;
 }
 
