@@ -6,12 +6,11 @@ const PUBLIC_NO = 0,
 	PUBLIC_READ = 1,
 	PUBLIC_WRITE = 2;
 
-var memoID = null;
 var currentMemo = null;
 
 // List all memo
 async function memoList() {
-	memoID = null;
+	currentMemo = null;
 	hideMain();
 	$('memoListGroup').hidden = false;
 
@@ -96,7 +95,7 @@ async function memoEdit(id) {
 	hideMain();
 
 	const [meta, text] = await waiter.all(
-		fetchJson(`/memo/get?m=${id}`),
+		currentMemo || fetchJson(`/memo/get?m=${id}`),
 		fetchText(`/memo/get?m=${id}`)
 	);
 
@@ -207,5 +206,25 @@ async function memoDelete() {
 
 	await waiter.all(fetch('/memo/delete?m=' + m.id));
 	history.pushState({}, '', '/');
+	currentMemo = null;
+	main();
+}
+
+async function memoCreateRelease() {
+	const m = currentMemo;
+	if (!m) return;
+	let t = await inputText('Create new release', '', () => memoEdit(m.id));
+	if (!t) return;
+
+	await waiter.all(fetch('/memo/release/new?m=' + m.id, {
+		method: 'PUT',
+		headers: new Headers({
+			'Content-Type': 'text/plain',
+		}),
+		body: t,
+	}));
+
+	currentMemo = null;
+	history.pushState({}, '', `/memo/release/view?m=${m.id}&r=${m.releases.length}`);
 	main();
 }
