@@ -199,3 +199,13 @@ async function memoView(id, r, mime) {
 		break;
 	}
 }
+
+async function memoDelete() {
+	if (!currentMemo) return;
+	const m = currentMemo;
+	if (await inputConfirm(m.title, `Please confirm to remove this memo. Write '${m.title}'`)) return;
+
+	await waiter.all(fetch('/memo/delete?m=' + m.id));
+	history.pushState({}, '', '/');
+	main();
+}
