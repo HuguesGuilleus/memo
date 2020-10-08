@@ -38,14 +38,7 @@ async function memoList() {
 			`/memo/${isr?'release/view':'edit'}?m=${id}${isr?'&r='+release:''}`
 		);
 		$goto(l);
-		$new(l, 'span', '', 'badge', date.toLocaleDateString()).title = date.toLocaleString();
-		switch (pub) {
-		case PUBLIC_READ:
-			$new(l, 'span', '', 'badge', 'Read').title = 'Every on who had this link can view this memo.';
-			break;
-		case PUBLIC_WRITE:
-			$new(l, 'span', '', 'badge', 'Write').title = 'Every on who had this link can view and edit this memo.';
-		}
+		addBadge(l, pub, date);
 
 		const html = $anchor(group, '', ['memoItemLinkImg', 'imgHTML'], '',
 			`/memo/${isr?'release/':''}html?m=${id}${isr?'&r='+release:''}`);
@@ -108,8 +101,10 @@ async function memoEdit(id) {
 	);
 
 	currentMemo = meta;
-	meta.upload = new Date(meta.upload);
-	$('title').innerText = meta.title;
+	meta.update = new Date(meta.update);
+	const t = $('title');
+	t.innerText = meta.title;
+	addBadge(t, meta.public, meta.update);
 
 	const memoEdit = $('memoEdit');
 	while (memoEdit.children.length) memoEdit.children[0].remove();
@@ -167,7 +162,14 @@ async function memoView(id, r, mime) {
 	hideMain();
 
 	const [meta, text] = await waiter.all(
-		fetchJson(`/memo/get?m=${id}`),
+		fetchJson(`/memo/get?m=${id}`).then(j => {
+			j.update = new Date(j.update);
+			j.releases = (j.releases || []).map(r => {
+				r.date = new Date(r.date);
+				return r;
+			});
+			return j;
+		}),
 		fetch(`/memo/${isr?'release/':''}get?m=${id}${isr?'&r='+r:''}`, {
 			headers: new Headers({
 				'Accept': mime,
@@ -176,7 +178,9 @@ async function memoView(id, r, mime) {
 	);
 
 	document.title = 'Memo: ' + meta.title;
-	$('title').innerText = meta.title;
+	const t = $('title');
+	t.innerText = meta.title;
+	addBadge(t, meta.public, isr ? meta.releases[r].date : meta.update);
 
 	const v = $('memoViewContent');
 	while (v.children.length) v.children[0].remove();

@@ -63,6 +63,7 @@ main#input {
 	font-weight: bold;
 	background: var(--cline);
 	color: white;
+	break-inside: avoid;
 }
 
 table {

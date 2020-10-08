@@ -163,3 +163,14 @@ async function fetchJson(url, body, opt) {
 	};
 	return fetch(url, opt).then(rep => rep.json());
 }
+
+function addBadge(parent, pub, date) {
+	$new(parent, 'span', '', 'badge', date.toLocaleDateString()).title = date.toLocaleString();
+	switch (pub) {
+	case PUBLIC_READ:
+		$new(parent, 'span', '', 'badge', 'Read').title = 'Every on who had this link can view this memo.';
+		break;
+	case PUBLIC_WRITE:
+		$new(parent, 'span', '', 'badge', 'Write').title = 'Every on who had this link can view and edit this memo.';
+	}
+}
