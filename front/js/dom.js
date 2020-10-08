@@ -10,13 +10,14 @@ function hideMain() {
 }
 
 // Return a Promise with the text inside.
-function inputText(info, value) {
+function inputText(info, value, cancel) {
 	hideMain();
 	let group = $('input');
 	group.hidden = false;
 
 	let input = $('inputText');
 	input.value = value;
+	input.placeholder = '';
 	input.focus();
 
 	$('inputInfo').innerText = info;
@@ -33,7 +34,43 @@ function inputText(info, value) {
 			if (e.key === 'Enter') end();
 		});
 
-		$e('inputCancel', 'onclick', () => resolve(null));
+		$e('inputCancel', 'onclick', () => {
+			resolve(null);
+			cancel();
+		});
+	}).finally(v => {
+		group.hidden = true;
+	});
+}
+
+// Return a Promise that resole with false if the user confirm and true to
+// cancel.
+function inputConfirm(value, info) {
+	hideMain();
+	const group = $('input');
+	group.hidden = false;
+	$('inputInfo').innerText = info;
+
+	let input = $('inputText');
+	input.placeholder = value;
+	input.value = '';
+	input.focus();
+
+	return new Promise(resolve => {
+		function end() {
+			if (value === input.value) resolve(false);
+		};
+
+		const submit = $('inputSubmit');
+		submit.hidden = true;
+		$e(submit, 'onclick', end);
+		$e(input, 'onkeydown', e => {
+			if (e.key === 'Enter') end();
+		});
+		$e(input, 'oninput', () => {
+			submit.hidden = value !== input.value;
+		});
+		$e('inputCancel', 'onclick', () => resolve(true));
 	}).finally(v => {
 		group.hidden = true;
 	});

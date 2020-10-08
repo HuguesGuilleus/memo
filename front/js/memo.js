@@ -91,7 +91,7 @@ function memoListSearch() {}
 
 // Get text from memo
 async function memoNew() {
-	let title = await inputText('The new memo title:', '');
+	let title = await inputText('The new memo title:', '', memoList);
 	if (!title) return;
 	let id = await fetchText('/memo/create', title);
 	history.pushState({}, `Memo: ${title}`, '/memo/edit?m=' + id);
