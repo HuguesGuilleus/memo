@@ -115,15 +115,81 @@ async function memoEdit(id) {
 	lines.forEach((l, i) => {
 		$new(memoEdit, 'li', `l-${i}`, [], l)
 	});
+
+	document.onselectionchange();
 }
 
-function memoEditKey(event) {
-	console.log("event.key:", event, event.key);
-	if (event.key === 'Tab') {
-		event.preventDefault();
-	}
+var selection;
+document.onselectionchange = function () {
+	selection = document.getSelection();
+};
 
-	$('memoEdit').querySelectorAll('br').forEach(br => br.remove());
+function memoEditKey(event) {
+	switch (event.key) {
+	case 'Tab':
+		switch (selection.type) {
+		case 'Caret':
+			const node = selection.anchorNode;
+			if (event.shiftKey) {
+				if (node.substringData(0, 1) === '\t') {
+					node.deleteData(0, 1);
+				}
+			} else {
+				node.insertData(selection.anchorOffset, '\t');
+				selection.collapse(node, selection.anchorOffset + 1);
+			}
+			break;
+		case 'Range':
+			const r = selection.getRangeAt(0);
+			const walker = r.startContainer === r.endContainer ? {
+					firstChild() {
+						return r.startContainer;
+					},
+					nextNode() {
+						return null;
+					}
+				} :
+				document.createTreeWalker(
+					r.commonAncestorContainer,
+					NodeFilter.SHOW_TEXT, {
+						before: true,
+						after: false,
+						acceptNode(n) {
+							if (this.before) {
+								if (n === r.startContainer) {
+									this.before = false;
+									return NodeFilter.FILTER_ACCEPT;
+								} else {
+									return NodeFilter.FILTER_REJECT;
+								}
+							} else {
+								if (this.after) return NodeFilter.FILTER_REJECT;
+								if (n === r.endContainer) {
+									this.after = true;
+								}
+								return NodeFilter.FILTER_ACCEPT;
+							}
+						},
+					},
+				);
+			for (let n = walker.firstChild(); n; n = walker.nextNode()) {
+				if (event.shiftKey) {
+					const t = n.substringData(0, 1);
+					if (t === '\t' || t === ' ') {
+						n.deleteData(0, 1);
+					}
+				} else {
+					n.insertData(0, '\t');
+				}
+			}
+			break;
+		default:
+			console.log("selection.type:", selection.type);
+			return;
+		}
+		event.preventDefault();
+		break;
+	}
 }
 
 // Save the current memo

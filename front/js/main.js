@@ -48,7 +48,11 @@ function main() {
 window.addEventListener('popstate', main);
 document.addEventListener("DOMContentLoaded", () => {
 	$qsa('a.goto').forEach(a => $goto(a));
-	$e('memoEdit', 'keydown', memoEditKey);
+	const memoEdit = $('memoEdit');
+	$e(memoEdit, 'keydown', memoEditKey);
+	$e(memoEdit, 'input', () => {
+		memoEdit.querySelectorAll('br').forEach(br => br.remove());
+	});
 	waiter = new Waiter();
 	waiter.off();
 	main();
