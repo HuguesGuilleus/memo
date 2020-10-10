@@ -183,13 +183,48 @@ function memoEditKey(event) {
 				}
 			}
 			break;
-		default:
-			console.log("selection.type:", selection.type);
-			return;
 		}
-		event.preventDefault();
 		break;
+	case '\'':
+	case '"':
+	case '(':
+	case '{':
+	case '[':
+	case '<':
+	case '`':
+	case '«':
+	case '“':
+		const k = event.key;
+		switch (selection.type) {
+		case 'Caret':
+			const n = selection.anchorNode;
+			n.insertData(selection.anchorOffset, k + quoteOposite(k));
+			selection.collapse(n, selection.anchorOffset + 1);
+			break;
+		case 'Range':
+			const r = selection.getRangeAt(0);
+			r.startContainer.insertData(r.startOffset, k);
+			r.endContainer.insertData(r.endOffset, quoteOposite(k));
+			r.setEnd(r.endContainer, r.endOffset + 1);
+			break;
+		}
+		break;
+	default:
+		return;
 	}
+	event.preventDefault();
+}
+
+// Return the ending char for quoting a sequence:
+function quoteOposite(c) {
+	return {
+		'(': ')',
+		'{': '}',
+		'[': ']',
+		'<': '>',
+		'«': '»',
+		'“': '”',
+	} [c] || c;
 }
 
 // Save the current memo
