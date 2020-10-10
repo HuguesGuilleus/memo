@@ -122,17 +122,17 @@ function memoEditKey(event) {
 	if (event.key === 'Tab') {
 		event.preventDefault();
 	}
+
+	$('memoEdit').querySelectorAll('br').forEach(br => br.remove());
 }
 
 // Save the current memo
 async function memoSave() {
 	if (!currentMemo) return;
 
-	let text = '';
-	let memo = $('memoEdit');
-	for (let i = 0; i < memo.children.length; i++) {
-		text += memo.children[i].innerText + '\n';
-	}
+	const text = Array.from($('memoEdit').children)
+		.map(c => c.innerText)
+		.join('\n');
 
 	waiter.on();
 	await fetch('/memo/text?m=' + currentMemo.id, {
