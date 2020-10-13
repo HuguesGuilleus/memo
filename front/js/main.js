@@ -47,14 +47,34 @@ function main() {
 
 window.addEventListener('popstate', main);
 document.addEventListener("DOMContentLoaded", () => {
+	waiter = new Waiter();
+
 	$qsa('a.goto').forEach(a => $goto(a));
 	const memoEdit = $('memoEdit');
 	$e(memoEdit, 'keydown', memoEditKey);
 	$e(memoEdit, 'input', () => {
 		memoEdit.querySelectorAll('br').forEach(br => br.remove());
 	});
-	waiter = new Waiter();
-	waiter.off();
+
+	const menu = $('menuGroup');
+	let menuActive = false;
+
+	function menuSwitch(e) {
+		if (menuActive = !menuActive) {
+			menu.classList.add('active');
+		} else {
+			menu.classList.remove('active');
+		}
+		e.stopPropagation();
+	}
+	$e('menuImg', 'click', menuSwitch);
+	$e(document.body, 'click', e => menuActive && menuSwitch(e));
+
+	$e('menuEditTitle', 'click', menuEditTitle);
+	$e('menuEditPublic', 'click', menuEditPublic);
+	$e('menuRelease', 'click', memoCreateRelease);
+	$e('menuDelete', 'click', menuDelete);
+
 	main();
 }, {
 	once: true,

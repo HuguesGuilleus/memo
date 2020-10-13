@@ -93,6 +93,7 @@ async function memoNew() {
 // Display one memo.
 async function memoEdit(id) {
 	hideMain();
+	$('memuMemo').hidden = false;
 
 	const [meta, text] = await waiter.all(
 		currentMemo || fetchJson(`/memo/get?m=${id}`),

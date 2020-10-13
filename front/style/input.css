@@ -31,7 +31,7 @@ input:invalid {
 
 input {
 	display: block;
-	width: calc(100% - var(--sp));
+	width: 100%;
 	margin: 1ex 0;
 }
 

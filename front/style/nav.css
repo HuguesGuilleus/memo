@@ -14,13 +14,13 @@ nav {
 #menuGroup {
 	display: inline-block;
 	margin: 0 1ex;
-	/* position: relative; */
 }
 
 #menuImg {
 	width: 1em;
 }
 
+#menuGroup.active #menuContent,
 #menuGroup:hover #menuContent {
 	display: block;
 }
@@ -28,9 +28,21 @@ nav {
 #menuContent {
 	display: none;
 	position: absolute;
-	background: red;
-	width: 30ex;
-	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+	width: calc(var(--w) / 2);
+	padding: var(--sp);
+	box-shadow: 0 8px 16px 0 var(--cline);
+	background: var(--bg-primary);
+}
+
+#menuContent a,
+.goto {
+	display: block;
+	color: var(--cline-focus);
+	text-decoration: none;
+}
+#menuContent a:hover,
+.goto:hover {
+	background: var(--cline);
 }
 
 #wait {

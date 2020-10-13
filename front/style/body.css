@@ -43,6 +43,11 @@ main {
 	padding: var(--sp);
 }
 
+hr {
+	width: 90%;
+	border: solid var(--cline) var(--l2);
+}
+
 .mainInput {
 	max-width: var(--w);
 }

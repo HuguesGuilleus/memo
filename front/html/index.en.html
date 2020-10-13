@@ -28,7 +28,16 @@
 				<rect y="16" width="24" height="24" fill="url(#h)" />
 			</svg>
 			<div id=menuContent>
-				<a href="/memo/new" id=newMemo class="goto">New memo</a><br>
+				<a href="/" class="goto">All memos</a>
+				<a href="/memo/new" class="goto">New memo</a>
+				<div id=memuMemo>
+					<hr>
+					<div class="goto" id=menuRelease>Create a new release</div>
+					<div class="goto" id=menuEditTitle>Edit title</div>
+					<div class="goto" id=menuEditPublic>Edit public level</div>
+					<div class="goto" id=menuDelete>Delete</div>
+				</div>
+				<hr>
 				<a href="/logout">Disconect</a>
 			</div>
 		</div>
@@ -54,7 +63,7 @@
 		<button type=submit id=inputPublicCancel class="firstLineInput inputPlain">Cancel</button>
 	</main>
 
-	<main id=memoListGroup>
+	<main id=memoListGroup class="mainInput">
 		<input type=search id=memoListSearch placeholder="Search (RegExp who ignore case)">
 		<ul id=memoList></ul>
 	</main>

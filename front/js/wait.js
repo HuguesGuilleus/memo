@@ -7,6 +7,7 @@ var waiter = null;
 class Waiter {
 	constructor() {
 		this.w = $('wait');
+		this.off();
 	}
 	on() {
 		this.w.hidden = false;

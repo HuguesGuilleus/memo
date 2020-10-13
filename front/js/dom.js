@@ -7,6 +7,7 @@ function hideMain() {
 	for (let i = 0; i < mains.length; i++) {
 		mains[i].hidden = true
 	}
+	$('memuMemo').hidden = true;
 }
 
 // Return a Promise with the text inside.
