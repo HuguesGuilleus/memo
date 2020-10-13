@@ -13,6 +13,7 @@ input {
 	background-color: var(--bg-secondary);
 }
 
+.select,
 button:focus,
 button:hover,
 input:focus,

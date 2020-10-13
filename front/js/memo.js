@@ -252,9 +252,63 @@ async function memoEditTile() {
 	if (!n) return;
 
 	waiter.on();
-	await fetchText('/memo/title?m=' + currentMemo.id, n);
+	const id = currentMemo.id;
+	currentMemo = null;
+	await fetchText('/memo/title?m=' + id, n);
 	waiter.off();
-	memoGotoView(currentMemo.id);
+	history.pushState({}, '', '/memo/edit?m=' + id);
+	memoEdit(id);
+}
+
+async function memoEditPublic() {
+	if (!currentMemo) return;
+	hideMain();
+	const main = $('inputPublic');
+	main.hidden = false;
+
+	function end() {
+		main.hidden = true;
+		const id = currentMemo.id;
+		currentMemo = null;
+		memoEdit(id);
+	}
+	$e('inputPublicCancel', 'onclick', end);
+
+	const buttons = ['inputPublicNo', 'inputPublicRead', 'inputPublicWrite']
+		.map(id => $(id));
+
+	buttons.forEach(b => {
+		console.log("parseInt(b.value) === currentMemo.public:",
+			parseInt(b.value) === currentMemo.public, b);
+
+		if (parseInt(b.value) === currentMemo.public) {
+			b.classList.add('select');
+			$e(b, 'onclick', end);
+		} else {
+			b.classList.remove('select');
+			$e(b, 'onclick', async () => {
+
+				console.log("body:", ({
+					'0': 'no',
+					'1': 'read',
+					'2': 'write',
+				} [b.value]));
+
+				await waiter.all(fetch('/memo/public?m=' + currentMemo.id, {
+					method: 'PATCH',
+					headers: new Headers({
+						'Content-Type': 'text/plain',
+					}),
+					body: ({
+						'0': 'no',
+						'1': 'read',
+						'2': 'write',
+					} [b.value]),
+				}));
+				end();
+			});
+		}
+	});
 }
 
 async function memoView(id, r, mime) {
