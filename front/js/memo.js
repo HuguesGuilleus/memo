@@ -244,6 +244,8 @@ async function memoSave() {
 		body: text,
 	});
 	waiter.off();
+
+	new Notif(`'${currentMemo.title}' saved.`);
 }
 
 async function memoEditTile() {

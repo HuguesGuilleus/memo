@@ -1,0 +1,14 @@
+/* Arveto Memo
+BSD 3-Clause License
+Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
+
+.notif {
+	max-width: calc(var(--w) / 2);
+	position: absolute;
+	top: var(--sp);
+	right: var(--sp);
+	border: solid var(--l2) dodgerblue;
+	border-radius: 1ex;
+	padding: 1ex;
+	background: var(--cline);
+}
