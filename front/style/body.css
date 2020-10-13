@@ -43,9 +43,12 @@ main {
 	padding: var(--sp);
 }
 
+.mainInput {
+	max-width: var(--w);
+}
+
 #memoViewContent.textSpace,
-main > * > :not(.codeBloc):not(table),
-main#input {
+main > * > :not(.codeBloc):not(table) {
 	max-width: var(--w);
 	margin-right: auto;
 }

@@ -39,19 +39,19 @@
 
 	<div id=wait>Download data from the server. Please wait...</div>
 
-	<main id=input>
+	<main id=input class="mainInput">
 		<p id=inputInfo></p>
 		<input type=text id=inputText>
 		<button type=submit id=inputCancel class="firstLineInput">Cancel</button>
 		<button type=submit id=inputSubmit>OK</button>
 	</main>
 
-	<main id=inputPublic>
+	<main id=inputPublic class="mainInput">
 		<p>Select the public level for this element:</p>
-		<button type=button class="firstLineInput" id="inputPublicNo" value="0"><b>Nothing:</b> The unloged peaple can't view or edit this memo.</button><br>
-		<button type=button class="firstLineInput" id="inputPublicRead" value="1"><b>Read:</b> Anymone can view this memo.</button><br>
-		<button type=button class="firstLineInput" id="inputPublicWrite" value="2"><b>Write:</b> Anymone can view and edit this memo.</button><br>
-		<button type=submit id=inputPublicCancel class="firstLineInput">Cancel</button>
+		<button type=button class="firstLineInput inputPlain" id="inputPublicNo" value="0"><b>Nothing:</b> The unloged peaple can't view or edit this memo.</button><br>
+		<button type=button class="firstLineInput inputPlain" id="inputPublicRead" value="1"><b>Read:</b> Anymone can view this memo.</button><br>
+		<button type=button class="firstLineInput inputPlain" id="inputPublicWrite" value="2"><b>Write:</b> Anymone can view and edit this memo.</button><br>
+		<button type=submit id=inputPublicCancel class="firstLineInput inputPlain">Cancel</button>
 	</main>
 
 	<main id=memoListGroup>

@@ -16,6 +16,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	tab-size: 4;
 	-moz-tab-size: 4;
 	white-space: pre-wrap;
+	overflow-wrap: break-word;
 }
 #memoEdit > li::marker {
 	color: var(--cline-focus);
