@@ -70,10 +70,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	$e('menuImg', 'click', menuSwitch);
 	$e(document.body, 'click', e => menuActive && menuSwitch(e));
 
-	$e('menuEditTitle', 'click', menuEditTitle);
-	$e('menuEditPublic', 'click', menuEditPublic);
+	$e('menuSave', 'click', memoSave);
+	$e('menuFormat', 'click', memoFormat);
+	$e('menuEditTitle', 'click', memoEditTile);
+	$e('menuEditPublic', 'click', memoEditPublic);
 	$e('menuRelease', 'click', memoCreateRelease);
-	$e('menuDelete', 'click', menuDelete);
+	$e('menuDelete', 'click', memoDelete);
 
 	main();
 }, {
@@ -81,7 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener('keydown', e => {
-	if (e.key !== 's' || !e.ctrlKey || !currentMemo) return;
+	if (!e.ctrlKey) return;
+	switch (e.key) {
+	case 's':
+		memoSave();
+		break;
+	case 'b':
+		memoFormat();
+		break;
+	default:
+		return;
+	}
 	e.preventDefault();
-	memoSave();
 });

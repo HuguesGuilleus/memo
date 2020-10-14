@@ -4,7 +4,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
 .notif {
 	max-width: calc(var(--w) / 2);
-	position: absolute;
+	position: fixed;
 	top: var(--sp);
 	right: var(--sp);
 	border: solid var(--l2) dodgerblue;

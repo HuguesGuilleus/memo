@@ -249,9 +249,33 @@ async function memoSave() {
 	new Notif(`'${currentMemo.title}' saved.`);
 }
 
+// Format the current memo.
+async function memoFormat() {
+	if (!currentMemo) return;
+
+	waiter.on();
+	const text = (await fetch('/format', {
+		method: 'POST',
+		headers: new Headers({
+			'Content-Type': 'text/plain',
+		}),
+		body: Array.from($('memoEdit').children)
+			.map(c => c.innerText)
+			.join('\n'),
+	}).then(rep => rep.text()));
+	waiter.off();
+
+	const memoEdit = $('memoEdit');
+	while (memoEdit.children.length) memoEdit.children[0].remove();
+	(text.split(/\r?\n/) || ['']).forEach((l, i) => {
+		$new(memoEdit, 'li', `l-${i}`, [], l)
+	});
+}
+
 async function memoEditTile() {
 	if (!currentMemo) return;
-	let n = await inputText('The new memo title:', currentMemo.title);
+	let n = await inputText('The new memo title:', currentMemo.title,
+		() => memoEdit(currentMemo.id));
 	if (!n) return;
 
 	waiter.on();
@@ -360,7 +384,10 @@ async function memoView(id, r, mime) {
 async function memoDelete() {
 	if (!currentMemo) return;
 	const m = currentMemo;
-	if (await inputConfirm(m.title, `Please confirm to remove this memo. Write '${m.title}'`)) return;
+	if (await inputConfirm(m.title, `Please confirm to remove this memo. Write '${m.title}'`)) {
+		memoEdit(m.id);
+		return;
+	}
 
 	await waiter.all(fetch('/memo/delete?m=' + m.id));
 	history.pushState({}, '', '/');

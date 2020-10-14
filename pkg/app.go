@@ -10,6 +10,8 @@ import (
 	"github.com/Arveto/arvetoAuth/pkg/public2"
 	"github.com/HuguesGuilleus/go-db.v1"
 	"github.com/HuguesGuilleus/static.v3"
+	"github.com/shurcooL/markdownfmt/markdown"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -52,6 +54,7 @@ func NewApp() (*App, error) {
 	a.auth.Mux.Handle("/font/bold.ttf", static.New("font/ttf", nil).Func(front.FontBold))
 	a.auth.Mux.Handle("/font/code.ttf", static.New("font/ttf", nil).Func(front.FontCode))
 	a.auth.Mux.Handle("/font/text.ttf", static.New("font/ttf", nil).Func(front.FontText))
+	a.auth.Mux.HandleFunc("/format", format)
 
 	a.auth.HandleFunc("/memo/create", public.LevelStd, a.memoCreate)
 	a.auth.HandleFunc("/memo/delete", public.LevelAdmin, a.memoDelete)
@@ -75,4 +78,22 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("[REQ]", r.Method, r.RequestURI)
 	w.Header().Set("Server", "Arveto Memo server")
 	a.auth.Mux.ServeHTTP(w, r)
+}
+
+// Format the input body and return it into the ResponseWriter.
+func format(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	f, err := markdown.Process("", body, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(f)
 }
