@@ -5,7 +5,7 @@
 package memo
 
 import (
-	"github.com/Arveto/arvetoAuth/pkg/public2"
+	"github.com/Arveto/auth-go"
 	"html"
 	"io"
 	"net/http"
@@ -114,8 +114,8 @@ func (a *App) getText(w http.ResponseWriter, r *http.Request, max int) string {
 
 // Check if the user level is more than l. If fail a message is sending and
 // the function return true.
-func (a *App) checkLevel(w http.ResponseWriter, r *public.Request, l public.UserLevel) bool {
-	if l == public.LevelCandidate {
+func (a *App) checkLevel(w http.ResponseWriter, r *auth.Request, l auth.UserLevel) bool {
+	if l == auth.LevelCandidate {
 		return false
 	}
 

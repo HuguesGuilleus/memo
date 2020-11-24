@@ -6,8 +6,7 @@ package memo
 
 import (
 	"./front"
-	"encoding/json"
-	"github.com/Arveto/arvetoAuth/pkg/public2"
+	"github.com/Arveto/auth-go"
 	"github.com/HuguesGuilleus/go-db.v1"
 	"github.com/HuguesGuilleus/static.v3"
 	"github.com/shurcooL/markdownfmt/markdown"
@@ -18,20 +17,22 @@ import (
 
 type App struct {
 	db   *db.DB
-	auth *public.App
+	auth *auth.App
 }
 
 func NewApp() (*App, error) {
-	auth, err := public.NewApp("memo", "https://auth.dev.arveto.io/", true)
+	authapp, err := auth.NewApp("memo", "https://auth.dev.arveto.io/")
 	if err != nil {
 		return nil, err
 	}
 
 	a := &App{
 		db:   db.New("data/db/"),
-		auth: auth,
+		auth: authapp,
 	}
-	a.auth.Error = a.error
+	a.auth.Error = func(w http.ResponseWriter, r *http.Request, e error, code int) {
+		a.error(w, r, e.Error(), code)
+	}
 
 	static.Dev = true
 	htmlApp := static.Html().Func(front.HtmlIndexEn)
@@ -56,20 +57,15 @@ func NewApp() (*App, error) {
 	a.auth.Mux.Handle("/font/text.ttf", static.New("font/ttf", nil).Func(front.FontText))
 	a.auth.Mux.HandleFunc("/format", format)
 
-	a.auth.HandleFunc("/memo/create", public.LevelStd, a.memoCreate)
-	a.auth.HandleFunc("/memo/delete", public.LevelAdmin, a.memoDelete)
-	a.auth.HandleFunc("/memo/get", public.LevelCandidate, a.memoGet)
-	a.auth.HandleFunc("/memo/list", public.LevelVisitor, a.memoList)
-	a.auth.HandleFunc("/memo/public", public.LevelStd, a.memoPublic)
-	a.auth.HandleFunc("/memo/release/get", public.LevelCandidate, a.memoReleaseGet)
-	a.auth.HandleFunc("/memo/release/new", public.LevelVisitor, a.memoReleaseNew)
-	a.auth.HandleFunc("/memo/text", public.LevelCandidate, a.memoText)
-	a.auth.HandleFunc("/memo/title", public.LevelCandidate, a.memoTitle)
-
-	a.auth.HandleFunc("/me", public.LevelCandidate, func(w http.ResponseWriter, r *public.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(r.User)
-	})
+	a.auth.HandleFunc("/memo/create", auth.LevelStandard, a.memoCreate)
+	a.auth.HandleFunc("/memo/delete", auth.LevelAdministrator, a.memoDelete)
+	a.auth.HandleFunc("/memo/get", auth.LevelCandidate, a.memoGet)
+	a.auth.HandleFunc("/memo/list", auth.LevelVisitor, a.memoList)
+	a.auth.HandleFunc("/memo/public", auth.LevelStandard, a.memoPublic)
+	a.auth.HandleFunc("/memo/release/get", auth.LevelCandidate, a.memoReleaseGet)
+	a.auth.HandleFunc("/memo/release/new", auth.LevelVisitor, a.memoReleaseNew)
+	a.auth.HandleFunc("/memo/text", auth.LevelCandidate, a.memoText)
+	a.auth.HandleFunc("/memo/title", auth.LevelCandidate, a.memoTitle)
 
 	return a, nil
 }

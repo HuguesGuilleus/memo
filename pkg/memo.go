@@ -11,7 +11,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/Arveto/arvetoAuth/pkg/public2"
+	"github.com/Arveto/auth-go"
 	"github.com/HuguesGuilleus/go-db.v1"
 	"log"
 	"net/http"
@@ -94,7 +94,7 @@ func genPDF(title, id, release, text string, date time.Time) ([]byte, error) {
 /* HANDLERS */
 
 // List all memos id into a JSON array.
-func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
+func (a *App) memoList(w http.ResponseWriter, r *auth.Request) {
 	all := make([]Memo, 0)
 	a.db.ForS("memo:", 0, 0, nil, func(id string, m Memo) {
 		all = append(all, m)
@@ -104,13 +104,13 @@ func (a *App) memoList(w http.ResponseWriter, r *public.Request) {
 	json.NewEncoder(w).Encode(all)
 }
 
-func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
+func (a *App) memoGet(w http.ResponseWriter, r *auth.Request) {
 	m := a.getMemo(w, &r.Request)
 	if m == nil {
 		return
 	}
 
-	if m.Public < PublicRead && a.checkLevel(w, r, public.LevelVisitor) {
+	if m.Public < PublicRead && a.checkLevel(w, r, auth.LevelVisitor) {
 		return
 	}
 
@@ -151,13 +151,13 @@ func (a *App) memoGet(w http.ResponseWriter, r *public.Request) {
 }
 
 // Set the text body of a Memo
-func (a *App) memoText(w http.ResponseWriter, r *public.Request) {
+func (a *App) memoText(w http.ResponseWriter, r *auth.Request) {
 	m := a.getMemo(w, &r.Request)
 	if m == nil {
 		return
 	}
 
-	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelVisitor) {
+	if m.Public < PublicWrite && a.checkLevel(w, r, auth.LevelVisitor) {
 		return
 	}
 
@@ -170,8 +170,8 @@ func (a *App) memoText(w http.ResponseWriter, r *public.Request) {
 }
 
 // Create a new Memo.
-func (a *App) memoCreate(w http.ResponseWriter, r *public.Request) {
-	title := a.getText(w, &r.Request, TitleMax)
+func (a *App) memoCreate(w http.ResponseWriter, r *auth.Request) {
+	title := a.getText(w, r.R(), TitleMax)
 	if title == "" {
 		return
 	}
@@ -179,7 +179,7 @@ func (a *App) memoCreate(w http.ResponseWriter, r *public.Request) {
 	hash := md5.Sum([]byte(title))
 	id := hex.EncodeToString(hash[:])
 	if !a.db.UnknownS("memo:" + id) {
-		a.error(w, &r.Request, "The title hash already exit:"+id, http.StatusConflict)
+		a.error(w, r.R(), "The title hash already exit:"+id, http.StatusConflict)
 		return
 	}
 
@@ -197,8 +197,8 @@ func (a *App) memoCreate(w http.ResponseWriter, r *public.Request) {
 }
 
 // Delete an memo.
-func (a *App) memoDelete(w http.ResponseWriter, r *public.Request) {
-	m := a.getMemo(w, &r.Request)
+func (a *App) memoDelete(w http.ResponseWriter, r *auth.Request) {
+	m := a.getMemo(w, r.R())
 	if m == nil {
 		return
 	}
@@ -213,8 +213,8 @@ func (a *App) memoDelete(w http.ResponseWriter, r *public.Request) {
 }
 
 // Set Memo.public.
-func (a *App) memoPublic(w http.ResponseWriter, r *public.Request) {
-	m := a.getMemo(w, &r.Request)
+func (a *App) memoPublic(w http.ResponseWriter, r *auth.Request) {
+	m := a.getMemo(w, r.R())
 	if m == nil {
 		return
 	}
@@ -236,13 +236,13 @@ func (a *App) memoPublic(w http.ResponseWriter, r *public.Request) {
 }
 
 // Set Memo.Title
-func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
-	m := a.getMemo(w, &r.Request)
+func (a *App) memoTitle(w http.ResponseWriter, r *auth.Request) {
+	m := a.getMemo(w, r.R())
 	if m == nil {
 		return
 	}
 
-	if m.Public < PublicWrite && a.checkLevel(w, r, public.LevelVisitor) {
+	if m.Public < PublicWrite && a.checkLevel(w, r, auth.LevelVisitor) {
 		return
 	}
 
@@ -255,13 +255,13 @@ func (a *App) memoTitle(w http.ResponseWriter, r *public.Request) {
 	m.save()
 }
 
-func (a *App) memoReleaseGet(w http.ResponseWriter, r *public.Request) {
-	m := a.getMemo(w, &r.Request)
+func (a *App) memoReleaseGet(w http.ResponseWriter, r *auth.Request) {
+	m := a.getMemo(w, r.R())
 	if m == nil {
 		return
 	}
 
-	if m.Public < PublicRead && a.checkLevel(w, r, public.LevelVisitor) {
+	if m.Public < PublicRead && a.checkLevel(w, r, auth.LevelVisitor) {
 		return
 	}
 
@@ -296,7 +296,7 @@ func (a *App) memoReleaseGet(w http.ResponseWriter, r *public.Request) {
 ]`, http.StatusNotAcceptable)
 }
 
-func (a *App) memoReleaseNew(w http.ResponseWriter, r *public.Request) {
+func (a *App) memoReleaseNew(w http.ResponseWriter, r *auth.Request) {
 	m := a.getMemo(w, &r.Request)
 	if m == nil {
 		return
