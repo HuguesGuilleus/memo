@@ -47,6 +47,7 @@ namespace display {
 	function title(t: string) {
 		document.title = t;
 		titleElement.innerText = t;
+		history.replaceState({}, t);
 	}
 
 	/// Update the content from the model.
@@ -96,28 +97,42 @@ namespace display {
 	// Create a bloc for one memo. Used in the list or when display or edit
 	// one memo.
 	function createMemoBloc(m: Memo, parent: HTMLElement): HTMLElement {
-		const g = $new('li', parent, '', ['memoItem'], '');
-		const gTitle: HTMLDivElement = $new('div', g, '', ['memoItemLink'], '');
-		const a: HTMLAnchorElement = $new_a(gTitle, '', ['memoItemLinkName'], m.title, '');
+		// Add to parent the HTML anchor. If click, chanhe model url.
+		function newAnchor(url: CustomURL, parent: HTMLElement, cl: string[]): HTMLAnchorElement {
+			let a = $new_a(parent, '', cl, '', url.toString());
+			a.addEventListener('click', e => {
+				e.preventDefault();
+				model.url = url;
+			});
+			return a;
+		}
+
+		const li = $new('li', parent, '', ['memoItem'], '');
+		const gTitle: HTMLDivElement = $new('div', li, '', ['memoItemLink'], '');
+		const releaseGroup: HTMLDivElement = $new('div', li, '', ['memoItemRealseGroup'], '');
+
+		// TODO: use URLKind.Editor
+		const a = newAnchor(CustomURL.new(URLKind.Html, m.id), gTitle, ['memoItemLinkName']);
+		a.innerText = m.title;
 		addBadge(a, m.public, m.update);
 
-		$new_a(gTitle, '', ['memoItemLinkImg', 'imgHTML'], '', `/memo/html?m=${m.id}`)
-			.title = 'View HTML';
+		newAnchor(CustomURL.new(URLKind.View, m.id), gTitle, ['memoItemLinkImg', 'imgHTML']).title = 'View source';
 		$new_a(gTitle, '', ['memoItemLinkImg', 'imgPDF'], '', `/memo/get?f=pdf&m=${m.id}`)
 			.title = 'Download PDF';
 
-		const releaseGroup: HTMLDivElement = $new('div', g, '', ['memoItemRealseGroup'], '');
 		m.releases.forEach((r, i) => {
 			const g = $new('div', releaseGroup, '', ['memoItemLink'], '');
-			const a: HTMLAnchorElement = $new_a(g, '', ['memoItemLinkName'], r.title, '');
+
+			let a = newAnchor(CustomURL.new(URLKind.Html, m.id, i), g, ['memoItemLinkName'])
+			a.innerText = r.title;
 			addBadge(a, Public.No, r.date);
-			$new_a(g, '', ['memoItemLinkImg', 'imgHTML'], '', `/memo/release/html?m=${m.id}&r=${i}`)
-				.title = 'View HTML';
+
+			newAnchor(CustomURL.new(URLKind.View, m.id, i), g, ['memoItemLinkImg', 'imgHTML']).title = 'View source';
 			$new_a(g, '', ['memoItemLinkImg', 'imgPDF'], '', `/memo/release/get?f=pdf&m=${m.id}&r=${i}`)
 				.title = 'Download PDF';
 		});
 
-		return g;
+		return li;
 	}
 	// Apply the regexp to the memo list.
 	export function listSearch() {

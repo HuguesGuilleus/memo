@@ -15,6 +15,14 @@ class CustomURL {
 	memo: string | null = null;
 	release: number | null = null;
 
+	static new(k: URLKind, memo?: string, r?: number): CustomURL {
+		let m = new CustomURL('');
+		m.kind = k;
+		m.memo = memo ?? null;
+		m.release = r ?? null;
+		return m;
+	}
+
 	constructor(u: string) {
 		// Save Kind parse from the path p. unknow path return URLKind.List
 		function path2kind(p: string): URLKind {

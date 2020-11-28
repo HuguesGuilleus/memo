@@ -17,10 +17,14 @@ class Model {
 	private _url: CustomURL = new CustomURL(document.location.href);
 	get url(): CustomURL { return this._url }
 	set url(u: CustomURL) {
-		this.contentFetch();
+		history.pushState({}, '', u.toString());
+		this.urlSetNoHistory(u);
+	}
+	urlSetNoHistory(u: CustomURL) {
 		this._url = u;
-		display.update(this);
+		this.contentFetch();
 		this.memoFetch();
+		display.update(this);
 	}
 
 	private _memo: Memo | null = null;
