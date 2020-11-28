@@ -46,6 +46,7 @@ func NewApp() (*App, error) {
 	a.auth.Mux.Handle("/memo/new", htmlApp)
 	a.auth.Mux.Handle("/memo/edit", htmlApp)
 	a.auth.Mux.Handle("/memo/html", htmlApp)
+	a.auth.Mux.Handle("/memo/view", htmlApp)
 	a.auth.Mux.Handle("/memo/release/html", htmlApp)
 	a.auth.Mux.Handle("/memo/release/view", htmlApp)
 	a.auth.Mux.Handle("/app.js", static.Js().Func(front.Js))

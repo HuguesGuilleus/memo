@@ -14,11 +14,28 @@ interface Release {
 }
 
 class Memo {
-	id: string;
-	title: string;
-	public: Public;
-	update: Date;
-	releases: Release[];
+	id: string = '';
+	title: string = '';
+	public: Public = Public.No;
+	update: Date = new Date(0);
+	releases: Release[] = [];
 
-	constructor() { }
+	// Use from JSON
+	constructor(m: Memo) {
+		function toStr(v: any): string {
+			if (typeof v == "string") return v;
+			return '';
+		}
+		this.id = toStr(m.id);
+		this.title = toStr(m.title);
+		this.update = new Date(m.update);
+		this.public = m.public === Public.No
+			|| m.public === Public.Read
+			|| m.public === Public.Write ?
+			m.public : Public.No;
+		this.releases = (m.releases ?? []).map(r => ({
+			date: new Date(r.date),
+			title: toStr(r.title),
+		}));
+	}
 }
