@@ -121,7 +121,7 @@ namespace display {
 		a.innerText = m.title;
 		addBadge(a, m.public, m.update);
 
-		newAnchor(CustomURL.new(URLKind.View, m.id), gTitle, ['memoItemLinkImg', 'imgHTML']).title = 'View source';
+		newAnchor(CustomURL.new(URLKind.View, m.id), gTitle, ['memoItemLinkImg', 'imgCode']).title = 'View source';
 		$new_a(gTitle, '', ['memoItemLinkImg', 'imgPDF'], '', `/memo/get?f=pdf&m=${m.id}`)
 			.title = 'Download PDF';
 
@@ -132,7 +132,7 @@ namespace display {
 			a.innerText = r.title;
 			addBadge(a, Public.No, r.date);
 
-			newAnchor(CustomURL.new(URLKind.View, m.id, i), g, ['memoItemLinkImg', 'imgHTML']).title = 'View source';
+			newAnchor(CustomURL.new(URLKind.View, m.id, i), g, ['memoItemLinkImg', 'imgCode']).title = 'View source';
 			$new_a(g, '', ['memoItemLinkImg', 'imgPDF'], '', `/memo/release/get?f=pdf&m=${m.id}&r=${i}`)
 				.title = 'Download PDF';
 		});
