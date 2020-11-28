@@ -40,7 +40,7 @@ body {
 main {
 	max-width: var(--w-large);
 	margin: var(--sp) auto;
-	padding: var(--sp);
+	padding: 0 var(--sp);
 }
 
 hr {
