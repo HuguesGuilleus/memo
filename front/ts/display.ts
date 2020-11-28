@@ -24,6 +24,14 @@ namespace display {
 		const memoListSearch: HTMLInputElement = $<'input'>('memoListSearch');
 		memoListSearch.addEventListener('input',
 			() => model.listSearchSet(memoListSearch.value));
+
+		document.querySelectorAll('a.goto').forEach(a => {
+			const u = new CustomURL((<HTMLAnchorElement>a).href);
+			a.addEventListener('click', e => {
+				e.preventDefault();
+				model.url = u;
+			});
+		});
 	}
 	// Update from model.kind URL
 	export function update(model: Model) {
