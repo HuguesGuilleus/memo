@@ -21,9 +21,10 @@ class Model {
 		this.urlSetNoHistory(u);
 	}
 	urlSetNoHistory(u: CustomURL) {
+		const old = this.url;
 		this._url = u;
+		if (old.memo != u.memo) this.memoFetch();
 		this.contentFetch();
-		this.memoFetch();
 		display.update(this);
 	}
 
