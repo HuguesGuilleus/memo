@@ -12,6 +12,6 @@ namespace Main {
 		main();
 	}
 	window.addEventListener('popstate', () => {
-		model.url = new CustomURL(document.location.href);
+		model.urlSetNoHistory(new CustomURL(document.location.href));
 	});
 }

@@ -74,7 +74,12 @@ namespace display {
 				memoBlock = null;
 			}
 		} else {
-			title(model.memo.title);
+			let r = model.url.release;
+			if (r !== null) {
+				title(`Release: ${model.memo.releases[r].title} (${model.memo.title})`);
+			} else {
+				title('Memo: ' + model.memo.title);
+			}
 			if (memoBlock) memoBlock.remove();
 			memoBlock = createMemoBloc(model.memo, memoSingle);
 		}
