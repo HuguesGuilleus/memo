@@ -9,7 +9,8 @@ namespace display {
 		memoSingle: HTMLElement,
 		memoViewContent: HTMLElement,
 		memoView: HTMLElement,
-		titleElement: HTMLHeadingElement;
+		titleElement: HTMLHeadingElement,
+		wait: HTMLElement;
 
 	/// Init display
 	export function init() {
@@ -18,6 +19,7 @@ namespace display {
 		mains.push(memoView = $('memoView'));
 		mains.push(memoEdit = $('memoEdit'));
 		mains.push(memoViewContent = $('memoViewContent'));
+		mains.push(wait = $('wait'));
 		titleElement = $<'h1'>('title');
 		memoSingle = $('memoSingle');
 
@@ -60,6 +62,16 @@ namespace display {
 		titleElement.innerText = t;
 		history.replaceState({}, t);
 	}
+	// Display the waiter then a notification.
+	function waiting<T>(p: Promise<T>, notif: string): Promise<T> {
+		wait.hidden = false;
+		return p.then(v => {
+			const el = $new('div', document.body, '', ['notif'], notif);
+			el.addEventListener('click', () => el.remove())
+			setTimeout(() => el.remove(), 2000);
+			return v;
+		}).finally(() => wait.hidden = true);
+	}
 
 	/// Update the content from the model.
 	export function content(model: Model) {
@@ -79,6 +91,19 @@ namespace display {
 		model.content.split(/\r?\n/).forEach((l, i) => {
 			return $new('li', memoEdit, `l-${i}`, [], l);
 		});
+	}
+	export function editorSave() {
+		if (model.url.kind !== URLKind.Editor) return;
+		const text = Array.from(memoEdit.children)
+			.map(li => li.textContent)
+			.join('\n');
+		waiting(fetch('/memo/text?m=' + model.url.memo, {
+			method: 'POST',
+			headers: new Headers({
+				'Content-Type': 'text/plain',
+			}),
+			body: text,
+		}), 'Memo saved');
 	}
 
 	// Display information about the current memo.

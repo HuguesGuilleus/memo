@@ -14,4 +14,14 @@ namespace Main {
 	window.addEventListener('popstate', () => {
 		model.urlSetNoHistory(new CustomURL(document.location.href));
 	});
+	window.addEventListener('keydown', event => {
+		if (!event.ctrlKey) return;
+		switch (event.key) {
+			case 's':
+				display.editorSave();
+				break;
+			default: return;
+		}
+		event.preventDefault();
+	});
 }
