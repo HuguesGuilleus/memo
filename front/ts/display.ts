@@ -87,23 +87,38 @@ namespace display {
 
 	// Display the editor.
 	export function editor(model: Model) {
-		memoEdit.childNodes.forEach(child => child.remove());
+		Array.from(memoEdit.children).forEach(child => child.remove());
 		model.content.split(/\r?\n/).forEach((l, i) => {
 			return $new('li', memoEdit, `l-${i}`, [], l);
 		});
 	}
-	export function editorSave() {
-		if (model.url.kind !== URLKind.Editor) return;
-		const text = Array.from(memoEdit.children)
+	// Get the text from edito block.
+	function editorText(): string {
+		return Array.from(memoEdit.children)
 			.map(li => li.textContent)
 			.join('\n');
+	}
+	export function editorSave() {
+		if (model.url.kind !== URLKind.Editor) return;
 		waiting(fetch('/memo/text?m=' + model.url.memo, {
 			method: 'POST',
 			headers: new Headers({
 				'Content-Type': 'text/plain',
 			}),
-			body: text,
+			body: editorText(),
 		}), 'Memo saved');
+	}
+	export async function editorFormat() {
+		if (model.url.kind !== URLKind.Editor) return;
+		model.content = await waiting(
+			fetch('/format', {
+				method: 'POST',
+				headers: new Headers({
+					'Content-Type': 'text/plain',
+				}),
+				body: editorText(),
+			}).then(rep => rep.text()),
+			'Memo formated');
 	}
 
 	// Display information about the current memo.

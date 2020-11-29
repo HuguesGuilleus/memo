@@ -20,6 +20,9 @@ namespace Main {
 			case 's':
 				display.editorSave();
 				break;
+			case 'b':
+				display.editorFormat();
+				break;
 			default: return;
 		}
 		event.preventDefault();
