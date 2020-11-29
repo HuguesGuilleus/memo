@@ -23,6 +23,8 @@ namespace display {
 		titleElement = $<'h1'>('title');
 		memoSingle = $('memoSingle');
 
+		memoEdit.addEventListener('keydown', editorKeyDown);
+
 		const memoListSearch: HTMLInputElement = $<'input'>('memoListSearch');
 		memoListSearch.addEventListener('input',
 			() => model.listSearchSet(memoListSearch.value));
