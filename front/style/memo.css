@@ -3,9 +3,9 @@ BSD 3-Clause License
 Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 
 #memoEdit {
-	max-width: 70ex;
-	padding: 2ex 2ex 2ex 5ex;
-	margin: auto;
+	max-width: var(--w);
+	box-sizing: border-box;
+	padding: var(--sp) var(--sp) var(--sp) 5ex;
 	font-size: inherit;
 	font-family: code;
 	background: var(--bg-secondary);
