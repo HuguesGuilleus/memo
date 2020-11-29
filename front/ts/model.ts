@@ -51,7 +51,15 @@ class Model {
 	get content(): string { return this._content }
 	set content(s: string) {
 		this._content = s;
-		display.content(this);
+		switch (this.url.kind) {
+			case URLKind.Editor:
+				display.editor(this);
+				break;
+			case URLKind.Html:
+			case URLKind.View:
+				display.content(this);
+				break;
+		}
 	}
 	async contentFetch() {
 		if (this.url.memo === null) {
@@ -64,6 +72,7 @@ class Model {
 				format = 'text/html';
 				break;
 			case URLKind.View:
+			case URLKind.Editor:
 				format = 'text/markdown';
 				break;
 			default: return;

@@ -43,11 +43,14 @@ namespace display {
 			case URLKind.View:
 			case URLKind.Html:
 				memoView.hidden = false;
-				memoEdit.hidden = true;
 				memoViewContent.hidden = false;
 				content(model);
 				return;
-			// case URLKind.Editor: return x.hidden = false;
+			case URLKind.Editor:
+				memoView.hidden = false;
+				memoEdit.hidden = false;
+				editor(model);
+				return;
 			// case URLKind.New : return x.hidden = false;
 		}
 	}
@@ -68,6 +71,14 @@ namespace display {
 			default:
 				return memoViewContent.innerText = '';
 		}
+	}
+
+	// Display the editor.
+	export function editor(model: Model) {
+		memoEdit.childNodes.forEach(child => child.remove());
+		model.content.split(/\r?\n/).forEach((l, i) => {
+			return $new('li', memoEdit, `l-${i}`, [], l);
+		});
 	}
 
 	// Display information about the current memo.
@@ -124,8 +135,7 @@ namespace display {
 		const gTitle: HTMLDivElement = $new('div', li, '', ['memoItemLink'], '');
 		const releaseGroup: HTMLDivElement = $new('div', li, '', ['memoItemRealseGroup'], '');
 
-		// TODO: use URLKind.Editor
-		const a = newAnchor(CustomURL.new(URLKind.Html, m.id), gTitle, ['memoItemLinkName']);
+		const a = newAnchor(CustomURL.new(URLKind.Editor, m.id), gTitle, ['memoItemLinkName']);
 		a.innerText = m.title;
 		addBadge(a, m.public, m.update);
 
