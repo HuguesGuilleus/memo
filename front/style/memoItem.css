@@ -34,6 +34,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 }
 
 .imgCode,
+.imgHTML,
 .imgPDF {
 	display: inline-block;
 	height: 1.5em;
@@ -44,6 +45,7 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 	background-color: var(--cline);
 }
 .imgCode:hover,
+.imgHTML:hover,
 .imgPDF:hover {
 	background-color: var(--cline-focus);
 }
@@ -53,4 +55,8 @@ Copyright (c) 2020, Arveto Ink, see AUTHOR list file. All rights reserved. */
 }
 .imgCode {
 	background-image: url('data:image/svg+xml;base64,PCEtLSBUaGlzIFNvdXJjZSBDb2RlIEZvcm0gaXMgc3ViamVjdCB0byB0aGUgdGVybXMgb2YgdGhlIE1vemlsbGEgUHVibGljCgktIExpY2Vuc2UsIHYuIDIuMC4gSWYgYSBjb3B5IG9mIHRoZSBNUEwgd2FzIG5vdCBkaXN0cmlidXRlZCB3aXRoIHRoaXMKCS0gZmlsZSwgWW91IGNhbiBvYnRhaW4gb25lIGF0IGh0dHA6Ly9tb3ppbGxhLm9yZy9NUEwvMi4wLy4gLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik02LjA1MiAxLjEzTDEuMTY0IDUuNTdhLjUuNSAwIDAgMCAwIC43NGw1IDQuNTZhLjUuNSAwIDAgMCAuNjczLS43NGwtNS00LjU1OXYuNzRsNC44ODctNC40NGEuNS41IDAgMCAwLS42NzItLjc0MXptNC44OTYgMTMuNzRsNC44ODgtNC40NGEuNS41IDAgMCAwIDAtLjc0bC01LTQuNTZhLjUuNSAwIDEgMC0uNjczLjc0bDUgNC41NTl2LS43NGwtNC44ODcgNC40NGEuNS41IDAgMCAwIC42NzIuNzQxeiIvPjwvc3ZnPg==');
+}
+.imgHTML {
+	margin-right: 1ex;
+	background-image: url('data:image/svg+xml;base64,PCEtLSBUaGlzIFNvdXJjZSBDb2RlIEZvcm0gaXMgc3ViamVjdCB0byB0aGUgdGVybXMgb2YgdGhlIE1vemlsbGEgUHVibGljCi0gTGljZW5zZSwgdi4gMi4wLiBJZiBhIGNvcHkgb2YgdGhlIE1QTCB3YXMgbm90IGRpc3RyaWJ1dGVkIHdpdGggdGhpcwotIGZpbGUsIFlvdSBjYW4gb2J0YWluIG9uZSBhdCBodHRwOi8vbW96aWxsYS5vcmcvTVBMLzIuMC8uIC0tPgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTMgNi4yNWEuNzUuNzUgMCAwMS43NS0uNzVoMTMuNWEuNzUuNzUgMCAwMTAgMS41SDMuNzVBLjc1Ljc1IDAgMDEzIDYuMjV6TTMuNzUgMTFhLjc1Ljc1IDAgMDEuNzUuNzV2N2EuNzUuNzUgMCAwMS0xLjUgMHYtN2EuNzUuNzUgMCAwMS43NS0uNzV6TTggMTIuMzEzYS43NS43NSAwIDAxLjc1LS43NWgxMS41YS43NS43NSAwIDAxMCAxLjVIOC43NWEuNzUuNzUgMCAwMS0uNzUtLjc1em0wIDUuOTM3YS43NS43NSAwIDAxLjc1LS43NWgxMS41YS43NS43NSAwIDAxMCAxLjVIOC43NWEuNzUuNzUgMCAwMS0uNzUtLjc1eiI+PC9wYXRoPjwvc3ZnPg==');
 }

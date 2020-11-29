@@ -179,7 +179,9 @@ namespace display {
 		a.innerText = m.title;
 		addBadge(a, m.public, m.update);
 
-		newAnchor(CustomURL.new(URLKind.View, m.id), gTitle, ['memoItemLinkImg', 'imgCode']).title = 'View source';
+		let viewer = $new('div', gTitle, '', [], '');
+		newAnchor(CustomURL.new(URLKind.Html, m.id), viewer, ['memoItemLinkImg', 'imgHTML']).title = 'View HTML';
+		newAnchor(CustomURL.new(URLKind.View, m.id), viewer, ['memoItemLinkImg', 'imgCode']).title = 'View source';
 		$new_a(gTitle, '', ['memoItemLinkImg', 'imgPDF'], '', `/memo/get?f=pdf&m=${m.id}`)
 			.title = 'Download PDF';
 
